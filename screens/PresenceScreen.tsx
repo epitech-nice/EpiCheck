@@ -122,9 +122,6 @@ export default function PresenceScreen() {
             };
 
             setScannedStudents((prev) => [newStudent, ...prev]);
-
-            // Show success feedback
-            Alert.alert("✓ Success", `Presence marked for ${email}`);
         } catch (error: any) {
             console.error("Error marking presence:", error);
 

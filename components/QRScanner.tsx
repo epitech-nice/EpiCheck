@@ -50,7 +50,7 @@ export default function QRScanner({ onScan, isActive }: QRScannerProps) {
         // Reset scanned state after 3 seconds to allow rescanning
         setTimeout(() => {
             setScanned(false);
-        }, 3000);
+        }, 5000);
     };
 
     if (hasPermission === null) {

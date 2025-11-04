@@ -28,7 +28,9 @@
  */
 
 import { Audio } from "expo-av";
-import * as FileSystem from "expo-file-system";
+// eslint-disable-next-line import/no-unresolved
+// @ts-ignore - expo-file-system/legacy is the correct import path for deprecated API compatibility
+import * as FileSystem from "expo-file-system/legacy";
 
 // Default sounds
 const DEFAULT_SUCCESS_SOUND = require("../assets/sounds/metal-pipe-clang.mp3");
@@ -151,8 +153,8 @@ class SoundService {
      */
     async resetErrorSound(): Promise<void> {
         try {
-            const fileInfo = await FileSystem.getInfoAsync(CUSTOM_ERROR_PATH);
-            if (fileInfo.exists) {
+            const errorFile = await FileSystem.getInfoAsync(CUSTOM_ERROR_PATH);
+            if (errorFile.exists) {
                 await FileSystem.deleteAsync(CUSTOM_ERROR_PATH);
             }
             this.customErrorSound = null;

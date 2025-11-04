@@ -5,6 +5,7 @@ This guide explains how to build an APK for your EpiCheck app without using Expo
 ## Prerequisites
 
 ✅ **Already Installed:**
+
 - Java JDK 17 (OpenJDK)
 - Android SDK
 - Android platform-tools (adb)
@@ -22,6 +23,7 @@ npm run build:android:debug
 ```
 
 Or directly:
+
 ```bash
 expo run:android --variant debug
 ```
@@ -41,6 +43,7 @@ npm run build:apk
 ```
 
 Or:
+
 ```bash
 npm run build:android:release
 ```
@@ -72,6 +75,7 @@ keytool -genkeypair -v -storetype PKCS12 -keystore epiccheck-release-key.keystor
 ```
 
 You'll be asked for:
+
 - Keystore password (remember this!)
 - Key password
 - Your name/organization details
@@ -137,21 +141,23 @@ adb install android/app/build/outputs/apk/release/app-release.apk
 
 ## Build Options Comparison
 
-| Build Type | Command | Use Case | Size | Performance |
-|------------|---------|----------|------|-------------|
-| Debug | `npm run build:android:debug` | Development/Testing | Larger | Slower |
-| Release | `npm run build:apk` | Production | Smaller | Optimized |
+| Build Type | Command                       | Use Case            | Size    | Performance |
+| ---------- | ----------------------------- | ------------------- | ------- | ----------- |
+| Debug      | `npm run build:android:debug` | Development/Testing | Larger  | Slower      |
+| Release    | `npm run build:apk`           | Production          | Smaller | Optimized   |
 
 ## Troubleshooting
 
 ### Build Fails
 
 1. Clean the build:
+
 ```bash
 cd android && ./gradlew clean && cd ..
 ```
 
 2. Rebuild:
+
 ```bash
 npm run build:apk
 ```
@@ -159,6 +165,7 @@ npm run build:apk
 ### Missing Android Folder
 
 Run prebuild:
+
 ```bash
 npx expo prebuild --platform android
 ```
@@ -166,6 +173,7 @@ npx expo prebuild --platform android
 ### Gradle Issues
 
 Update Gradle wrapper:
+
 ```bash
 cd android && ./gradlew wrapper --gradle-version=8.14.3 && cd ..
 ```
@@ -173,6 +181,7 @@ cd android && ./gradlew wrapper --gradle-version=8.14.3 && cd ..
 ### Out of Memory
 
 Edit `android/gradle.properties` and add:
+
 ```properties
 org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
 ```
@@ -182,11 +191,13 @@ org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
 After successful build, find your APK at:
 
 **Debug:**
+
 ```
 android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
 **Release:**
+
 ```
 android/app/build/outputs/apk/release/app-release.apk
 ```

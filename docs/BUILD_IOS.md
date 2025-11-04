@@ -5,21 +5,24 @@ This guide explains how to build and install EpiCheck on your iPhone.
 ## Prerequisites
 
 ### 1. Xcode
+
 - Install from Mac App Store (free)
 - Open Xcode once to accept license agreement
 - Install Command Line Tools: `xcode-select --install`
 
 ### 2. Apple Developer Account
+
 - Free account works for testing (7-day certificates)
 - Sign in to Xcode with your Apple ID
 - Go to: Xcode → Settings → Accounts → Add Apple ID
 
 ### 3. iPhone Setup
+
 - Connect iPhone via USB
 - Trust your Mac on the iPhone
 - Enable Developer Mode on iPhone (iOS 16+):
-  - Settings → Privacy & Security → Developer Mode → ON
-  - Restart iPhone when prompted
+    - Settings → Privacy & Security → Developer Mode → ON
+    - Restart iPhone when prompted
 
 ## Quick Build (Development)
 
@@ -30,6 +33,7 @@ npm run ios
 ```
 
 This will:
+
 1. Generate iOS project (if needed)
 2. Build the app
 3. Install on connected iPhone
@@ -71,6 +75,7 @@ npx expo run:ios --device
 ### "Build failed"
 
 Common fixes:
+
 ```bash
 # Clean build
 cd ios && xcodebuild clean && cd ..
@@ -85,12 +90,14 @@ npx expo prebuild --platform ios --clean
 ## Development vs Production
 
 ### Development Build (Testing)
+
 - **Certificate**: 7 days with free account
 - **Installation**: Via Xcode/USB
 - **Updates**: Requires rebuild
 - **Size**: Larger (includes dev tools)
 
 ### Production Build (Distribution)
+
 - **Certificate**: Requires paid Apple Developer Program ($99/year)
 - **Installation**: App Store or TestFlight
 - **Updates**: Over-the-air
@@ -101,6 +108,7 @@ npx expo prebuild --platform ios --clean
 If you want to distribute the app:
 
 ### 1. Join Apple Developer Program
+
 - Cost: $99/year
 - Required for: App Store, TestFlight, Enterprise distribution
 - Sign up at: https://developer.apple.com/programs/
@@ -168,11 +176,13 @@ cd ios && pod install && cd ..
 ## Common Issues
 
 ### Certificate Expired
+
 - Free accounts: Rebuild every 7 days
 - Paid account: Valid for 1 year
 - Fix: Re-sign in Xcode or rebuild
 
 ### "Could not find iPhone"
+
 ```bash
 # Reset USB connection
 # Unplug → Wait 5 seconds → Replug
@@ -180,10 +190,12 @@ cd ios && pod install && cd ..
 ```
 
 ### "Bundle identifier already exists"
+
 - Change bundle ID in app.json
 - Or: Clean derived data in Xcode
 
 ### Metro bundler issues
+
 ```bash
 # Reset Metro
 npx expo start --clear
@@ -203,6 +215,7 @@ npm run ios
 ## Testing Workflow
 
 ### For Development:
+
 ```bash
 # 1. Start Metro bundler
 npm start
@@ -214,6 +227,7 @@ npm run ios --device
 ```
 
 ### For Production Testing:
+
 ```bash
 # Build release version
 npx expo run:ios --configuration Release --device
@@ -222,6 +236,7 @@ npx expo run:ios --configuration Release --device
 ## App Capabilities
 
 The app requires these iOS capabilities:
+
 - ✅ Camera (QR scanning)
 - ✅ NFC (Student cards)
 - ✅ Network (API calls)
@@ -240,6 +255,7 @@ These are automatically configured in `ios/epiccheck/Info.plist`.
 ## Next Steps
 
 After successful build:
+
 1. ✅ App installs on iPhone
 2. ✅ Trust developer certificate in Settings
 3. ✅ Test camera QR scanning

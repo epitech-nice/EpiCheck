@@ -54,7 +54,7 @@ The app is pre-configured to use the Epitech API at `https://my.epitech.eu/api`.
 
 ```typescript
 // services/epitechApi.ts
-const API_BASE_URL = 'https://my.epitech.eu/api';
+const API_BASE_URL = "https://my.epitech.eu/api";
 ```
 
 ### Modifying API Endpoints
@@ -80,16 +80,19 @@ This will open Expo DevTools in your browser. You can then:
 ### Run on Different Platforms
 
 #### iOS (requires macOS)
+
 ```bash
 npm run ios
 ```
 
 #### Android
+
 ```bash
 npm run android
 ```
 
 #### Web
+
 ```bash
 npm run web
 ```
@@ -99,8 +102,8 @@ npm run web
 1. Install **Expo Go** from App Store (iOS) or Play Store (Android)
 2. Run `npm start`
 3. Scan the QR code shown in the terminal with:
-   - **iOS**: Camera app
-   - **Android**: Expo Go app
+    - **iOS**: Camera app
+    - **Android**: Expo Go app
 
 ## Usage Guide
 
@@ -113,11 +116,13 @@ npm run web
 ### 2. Scanning Modes
 
 #### QR Code Mode (Desktop/Web/Mobile)
+
 - Select "📷 QR Code" tab
 - Point camera at student's QR code
 - Presence will be marked automatically
 
 #### NFC Mode (Mobile Only)
+
 - Select "📱 NFC" tab (available only on mobile)
 - Hold student's NFC card near device
 - Presence will be marked automatically
@@ -162,16 +167,16 @@ EpiCheck/
 ### Authentication Flow
 
 ```typescript
-import epitechApi from './services/epitechApi';
+import epitechApi from "./services/epitechApi";
 
 // Login
 await epitechApi.login({
-  email: 'user@epitech.eu',
-  password: 'password'
+    email: "user@epitech.eu",
+    password: "password",
 });
 
 // Mark presence
-await epitechApi.markPresence('student@epitech.eu');
+await epitechApi.markPresence("student@epitech.eu");
 
 // Logout
 epitechApi.logout();
@@ -184,14 +189,14 @@ If your QR codes contain JSON or specific format, modify `components/QRScanner.t
 ```typescript
 // Example: QR code contains JSON
 const handleBarCodeScanned = ({ data }) => {
-  try {
-    const parsed = JSON.parse(data);
-    const email = parsed.email || parsed.studentId + '@epitech.eu';
-    onScan(email);
-  } catch (e) {
-    // Handle plain text QR codes
-    onScan(data);
-  }
+    try {
+        const parsed = JSON.parse(data);
+        const email = parsed.email || parsed.studentId + "@epitech.eu";
+        onScan(email);
+    } catch (e) {
+        // Handle plain text QR codes
+        onScan(data);
+    }
 };
 ```
 
@@ -202,7 +207,7 @@ For specific NFC card formats, modify `components/NFCScanner.tsx`:
 ```typescript
 // Read NDEF message or use tag ID
 // Map tag ID to student email if needed
-const tagId = '...'; // extracted from NFC tag
+const tagId = "..."; // extracted from NFC tag
 const email = await lookupEmailByTagId(tagId);
 ```
 
@@ -275,22 +280,26 @@ The app is fully typed with TypeScript for better development experience.
 ## Dependencies
 
 ### Core
+
 - **expo** - React Native framework
 - **react-native** - Mobile app framework
 - **typescript** - Type safety
 
 ### UI & Styling
+
 - **nativewind** - Tailwind CSS for React Native
 - **tailwindcss** - CSS framework
 - **react-native-reanimated** - Animations
 - **react-native-safe-area-context** - Safe area handling
 
 ### Navigation
+
 - **@react-navigation/native** - Navigation library
 - **@react-navigation/native-stack** - Stack navigator
 - **react-native-screens** - Native navigation primitives
 
 ### Features
+
 - **expo-camera** - Camera and QR code scanning
 - **react-native-nfc-manager** - NFC card reading
 - **axios** - HTTP client for API calls
@@ -303,6 +312,7 @@ This project is for educational purposes as part of Epitech coursework.
 ## Support
 
 For issues or questions:
+
 1. Check the Epitech API documentation
 2. Review the troubleshooting section
 3. Contact your Epitech administrator

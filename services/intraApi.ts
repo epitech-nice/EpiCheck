@@ -55,14 +55,14 @@ class IntraApiService {
 
                 if (!cookie) {
                     console.warn(
-                        "⚠️ No Intranet cookie found. User may need to authenticate."
+                        "⚠️ No Intranet cookie found. User may need to authenticate.",
                     );
                 } else {
                     console.log(
                         "✓ Using Intranet cookie for request:",
                         config.url,
                         "| Cookie length:",
-                        cookie.length
+                        cookie.length,
                     );
                 }
 
@@ -83,7 +83,7 @@ class IntraApiService {
 
                 return config;
             },
-            (error) => Promise.reject(error)
+            (error) => Promise.reject(error),
         );
 
         // Add response interceptor to log errors
@@ -91,13 +91,13 @@ class IntraApiService {
             (response) => response,
             (error) => {
                 if (error.response) {
-                    console.error('Intranet API Error:');
-                    console.error('  Status:', error.response.status);
-                    console.error('  URL:', error.config?.url);
-                    console.error('  Data:', error.response.data);
+                    console.error("Intranet API Error:");
+                    console.error("  Status:", error.response.status);
+                    console.error("  URL:", error.config?.url);
+                    console.error("  Data:", error.response.data);
                 }
                 return Promise.reject(error);
-            }
+            },
         );
     }
 
@@ -134,7 +134,7 @@ class IntraApiService {
         } catch (error: any) {
             console.error(
                 "Get current user error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
 
             // If 401/403, user needs to re-authenticate
@@ -156,7 +156,7 @@ class IntraApiService {
      */
     async getStudentsByLocation(
         location: string,
-        year: number
+        year: number,
     ): Promise<IIntraStudent[]> {
         try {
             const response = await this.api.get("/user/filter/user", {
@@ -171,7 +171,7 @@ class IntraApiService {
         } catch (error: any) {
             console.error(
                 "Get students error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch students from trombi");
         }
@@ -184,7 +184,7 @@ class IntraApiService {
     async getActivities(
         location: string,
         startDate: string,
-        endDate?: string
+        endDate?: string,
     ): Promise<IIntraEvent[]> {
         try {
             console.log("Fetching activities from Intra API:", {
@@ -202,13 +202,13 @@ class IntraApiService {
             console.log(
                 "Activities response:",
                 response.data?.length || 0,
-                "events"
+                "events",
             );
             return response.data;
         } catch (error: any) {
             console.error(
                 "Get activities error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             console.error("Status:", error.response?.status);
             console.error("Request params:", { location, startDate, endDate });
@@ -223,17 +223,17 @@ class IntraApiService {
     async getModuleInfo(
         scolaryear: string,
         codemodule: string,
-        codeinstance: string
+        codeinstance: string,
     ): Promise<IIntraModuleInfo> {
         try {
             const response = await this.api.get(
-                `/module/${scolaryear}/${codemodule}/${codeinstance}`
+                `/module/${scolaryear}/${codemodule}/${codeinstance}`,
             );
             return response.data;
         } catch (error: any) {
             console.error(
                 "Get module info error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch module information");
         }
@@ -246,13 +246,13 @@ class IntraApiService {
     async getRegisteredStudents(event: IIntraEvent): Promise<IIntraStudent[]> {
         try {
             const response = await this.api.get(
-                `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${event.codeacti}/${event.codeevent}/registered`
+                `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${event.codeacti}/${event.codeevent}/registered`,
             );
             return response.data;
         } catch (error: any) {
             console.error(
                 "Get registered students error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch registered students");
         }
@@ -266,40 +266,46 @@ class IntraApiService {
      */
     async updatePresence(
         event: IIntraEvent,
-        presences: IPresenceUpdate[]
+        presences: IPresenceUpdate[],
     ): Promise<void> {
         try {
             // Build form data body exactly like old project
-            let body = '';
+            let body = "";
             presences.forEach((presence, index) => {
-                if (index > 0) body += '&';
-                body += encodeURIComponent(`items[${index}][login]`) + '=' + encodeURIComponent(presence.login) + '&';
-                body += encodeURIComponent(`items[${index}][present]`) + '=' + encodeURIComponent(presence.present);
+                if (index > 0) body += "&";
+                body +=
+                    encodeURIComponent(`items[${index}][login]`) +
+                    "=" +
+                    encodeURIComponent(presence.login) +
+                    "&";
+                body +=
+                    encodeURIComponent(`items[${index}][present]`) +
+                    "=" +
+                    encodeURIComponent(presence.present);
             });
 
             const endpoint = `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${event.codeacti}/${event.codeevent}/updateregistered`;
 
-            console.log('🔥 Updating presence on Intranet:');
-            console.log('🔥 Endpoint:', endpoint);
-            console.log('🔥 Presences array:', JSON.stringify(presences, null, 2));
-            console.log('🔥 Raw body:', body);
-            console.log('🔥 Decoded body:', decodeURIComponent(body));
-
-            const response = await this.api.post(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                }
+            console.log("🔥 Updating presence on Intranet:");
+            console.log("🔥 Endpoint:", endpoint);
+            console.log(
+                "🔥 Presences array:",
+                JSON.stringify(presences, null, 2),
             );
+            console.log("🔥 Raw body:", body);
+            console.log("🔥 Decoded body:", decodeURIComponent(body));
 
-            console.log('✓ Presence update successful:', response.status);
+            const response = await this.api.post(endpoint, body, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            });
+
+            console.log("✓ Presence update successful:", response.status);
         } catch (error: any) {
             console.error(
                 "Update presence error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             console.error("Status:", error.response?.status);
             console.error("Event details:", {
@@ -311,12 +317,23 @@ class IntraApiService {
             });
 
             // Provide more specific error messages
-            if (error.response?.status === 401 || error.response?.status === 403) {
-                throw new Error("Session expired or unauthorized. Please log in again.");
+            if (
+                error.response?.status === 401 ||
+                error.response?.status === 403
+            ) {
+                throw new Error(
+                    "Session expired or unauthorized. Please log in again.",
+                );
             } else if (error.response?.status === 404) {
-                throw new Error("Event not found or you don't have permission to mark presence for this event.");
+                throw new Error(
+                    "Event not found or you don't have permission to mark presence for this event.",
+                );
             } else {
-                throw new Error(error.response?.data?.message || error.message || "Failed to update presence");
+                throw new Error(
+                    error.response?.data?.message ||
+                        error.message ||
+                        "Failed to update presence",
+                );
             }
         }
     }
@@ -327,11 +344,11 @@ class IntraApiService {
      */
     async markStudentPresent(
         event: IIntraEvent,
-        studentLogin: string
+        studentLogin: string,
     ): Promise<void> {
-        console.log('🎯 markStudentPresent called with login:', studentLogin);
-        console.log('🎯 Login type:', typeof studentLogin);
-        console.log('🎯 Login length:', studentLogin?.length);
+        console.log("🎯 markStudentPresent called with login:", studentLogin);
+        console.log("🎯 Login type:", typeof studentLogin);
+        console.log("🎯 Login length:", studentLogin?.length);
         return this.updatePresence(event, [
             {
                 login: studentLogin,
@@ -346,7 +363,7 @@ class IntraApiService {
      */
     async markStudentAbsent(
         event: IIntraEvent,
-        studentLogin: string
+        studentLogin: string,
     ): Promise<void> {
         return this.updatePresence(event, [
             {

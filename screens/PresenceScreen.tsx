@@ -104,7 +104,7 @@ export default function PresenceScreen() {
             // Check if we have an event context
             if (!event) {
                 throw new Error(
-                    "No event selected. Please go back and select an activity first."
+                    "No event selected. Please go back and select an activity first.",
                 );
             }
 
@@ -174,7 +174,7 @@ export default function PresenceScreen() {
                     style: "destructive",
                     onPress: () => setScannedStudents([]),
                 },
-            ]
+            ],
         );
     };
 
@@ -182,25 +182,26 @@ export default function PresenceScreen() {
         <SafeAreaView className="flex-1 bg-epitech-gray">
             {/* Header */}
             <View className="bg-epitech-blue px-4 py-5">
-                <View className="flex-row justify-between items-center mb-4">
-                    <View className="flex-row items-center flex-1">
+                <View className="mb-4 flex-row items-center justify-between">
+                    <View className="flex-1 flex-row items-center">
                         <TouchableOpacity
                             onPress={() => navigation.goBack()}
                             className="mr-3"
                         >
-                            <Text className="text-white text-2xl">←</Text>
+                            <Text className="text-2xl text-white">←</Text>
                         </TouchableOpacity>
                         <View className="flex-1">
-                            <Text className="text-white text-xl font-bold">
+                            <Text className="text-xl font-bold text-white">
                                 {event ? event.acti_title : "Presence Scanner"}
                             </Text>
                             {event && (
-                                <Text className="text-white/80 text-xs">
-                                    {event.type_code.toUpperCase()} • {new Date(event.start).toLocaleDateString()}
+                                <Text className="text-xs text-white/80">
+                                    {event.type_code.toUpperCase()} •{" "}
+                                    {new Date(event.start).toLocaleDateString()}
                                 </Text>
                             )}
                             {!event && (
-                                <Text className="text-yellow-300 text-xs">
+                                <Text className="text-xs text-yellow-300">
                                     ⚠️ No event selected
                                 </Text>
                             )}
@@ -208,24 +209,24 @@ export default function PresenceScreen() {
                     </View>
                     <TouchableOpacity
                         onPress={handleLogout}
-                        className="bg-white/20 px-4 py-2 rounded-lg border border-white/30"
+                        className="rounded-lg border border-white/30 bg-white/20 px-4 py-2"
                     >
-                        <Text className="text-white font-semibold text-sm">
+                        <Text className="text-sm font-semibold text-white">
                             Logout
                         </Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Mode Selector */}
-                <View className="flex-row bg-white/20 rounded-lg p-1 backdrop-blur">
+                <View className="flex-row rounded-lg bg-white/20 p-1 backdrop-blur">
                     <TouchableOpacity
                         onPress={() => setScanMode("qr")}
-                        className={`flex-1 py-3 rounded-md ${
+                        className={`flex-1 rounded-md py-3 ${
                             scanMode === "qr" ? "bg-white" : "bg-transparent"
                         }`}
                     >
                         <Text
-                            className={`text-center font-bold text-sm ${
+                            className={`text-center text-sm font-bold ${
                                 scanMode === "qr"
                                     ? "text-epitech-blue"
                                     : "text-white"
@@ -237,13 +238,13 @@ export default function PresenceScreen() {
 
                     <TouchableOpacity
                         onPress={() => setScanMode("nfc")}
-                        className={`flex-1 py-3 rounded-md ${
+                        className={`flex-1 rounded-md py-3 ${
                             scanMode === "nfc" ? "bg-white" : "bg-transparent"
                         }`}
                         disabled={Platform.OS === "web"}
                     >
                         <Text
-                            className={`text-center font-bold text-sm ${
+                            className={`text-center text-sm font-bold ${
                                 scanMode === "nfc"
                                     ? "text-epitech-blue"
                                     : "text-white/60"
@@ -266,15 +267,15 @@ export default function PresenceScreen() {
 
             {/* Scanned Students List */}
             <View
-                className="bg-white border-t-2 border-epitech-blue"
+                className="border-t-2 border-epitech-blue bg-white"
                 style={{ maxHeight: 250 }}
             >
-                <View className="flex-row justify-between items-center px-4 py-3 bg-epitech-gray border-b border-gray-300">
+                <View className="flex-row items-center justify-between border-b border-gray-300 bg-epitech-gray px-4 py-3">
                     <View>
-                        <Text className="text-epitech-navy font-bold text-base">
+                        <Text className="text-base font-bold text-epitech-navy">
                             Recent Scans
                         </Text>
-                        <Text className="text-epitech-gray-dark text-xs">
+                        <Text className="text-xs text-epitech-gray-dark">
                             {scannedStudents.length} student
                             {scannedStudents.length !== 1 ? "s" : ""} checked
                         </Text>
@@ -282,9 +283,9 @@ export default function PresenceScreen() {
                     {scannedStudents.length > 0 && (
                         <TouchableOpacity
                             onPress={clearHistory}
-                            className="bg-red-50 px-3 py-1.5 rounded-md"
+                            className="rounded-md bg-red-50 px-3 py-1.5"
                         >
-                            <Text className="text-red-600 font-semibold text-sm">
+                            <Text className="text-sm font-semibold text-red-600">
                                 Clear All
                             </Text>
                         </TouchableOpacity>
@@ -293,11 +294,11 @@ export default function PresenceScreen() {
 
                 <ScrollView className="px-4 py-2">
                     {scannedStudents.length === 0 ? (
-                        <View className="py-8 items-center">
-                            <Text className="text-gray-400 text-center text-sm">
+                        <View className="items-center py-8">
+                            <Text className="text-center text-sm text-gray-400">
                                 No scans yet
                             </Text>
-                            <Text className="text-gray-400 text-center text-xs mt-1">
+                            <Text className="mt-1 text-center text-xs text-gray-400">
                                 Start scanning student cards to mark presence
                             </Text>
                         </View>
@@ -305,24 +306,24 @@ export default function PresenceScreen() {
                         scannedStudents.map((student, index) => (
                             <View
                                 key={index}
-                                className={`mb-2 p-3.5 rounded-lg border ${
+                                className={`mb-2 rounded-lg border p-3.5 ${
                                     student.status === "success"
-                                        ? "bg-green-50 border-green-200"
-                                        : "bg-red-50 border-red-200"
+                                        ? "border-green-200 bg-green-50"
+                                        : "border-red-200 bg-red-50"
                                 }`}
                             >
-                                <View className="flex-row justify-between items-center">
-                                    <View className="flex-1 mr-2">
+                                <View className="flex-row items-center justify-between">
+                                    <View className="mr-2 flex-1">
                                         <View className="flex-row items-center">
                                             <View
-                                                className={`w-2 h-2 rounded-full mr-2 ${
+                                                className={`mr-2 h-2 w-2 rounded-full ${
                                                     student.status === "success"
                                                         ? "bg-green-500"
                                                         : "bg-red-500"
                                                 }`}
                                             />
                                             <Text
-                                                className={`font-semibold text-sm ${
+                                                className={`text-sm font-semibold ${
                                                     student.status === "success"
                                                         ? "text-green-800"
                                                         : "text-red-800"
@@ -332,13 +333,13 @@ export default function PresenceScreen() {
                                                 {student.email}
                                             </Text>
                                         </View>
-                                        <Text className="text-gray-500 text-xs ml-4 mt-0.5">
+                                        <Text className="ml-4 mt-0.5 text-xs text-gray-500">
                                             {student.status === "success"
                                                 ? "Presence marked"
                                                 : "Failed to mark"}
                                         </Text>
                                     </View>
-                                    <Text className="text-gray-600 text-xs font-medium">
+                                    <Text className="text-xs font-medium text-gray-600">
                                         {student.timestamp}
                                     </Text>
                                 </View>

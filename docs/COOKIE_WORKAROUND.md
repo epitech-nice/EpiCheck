@@ -19,11 +19,11 @@ The Intranet authentication currently doesn't work because:
 1. **Start the app** and you'll see the login screen
 2. **Click "🧪 Dev: Use Manual Cookie"** button at the bottom
 3. **Get your cookie from browser:**
-   - Open https://intra.epitech.eu in Chrome/Firefox
-   - Login with your Office365 account
-   - Open Developer Tools (F12)
-   - Go to Application tab → Cookies → https://intra.epitech.eu
-   - Find the `user` cookie and copy its value (it's a long string)
+    - Open https://intra.epitech.eu in Chrome/Firefox
+    - Login with your Office365 account
+    - Open Developer Tools (F12)
+    - Go to Application tab → Cookies → https://intra.epitech.eu
+    - Find the `user` cookie and copy its value (it's a long string)
 4. **Paste the cookie** in the prompt that appears
 5. **Click "Set Cookie"** and you'll be logged in!
 
@@ -38,24 +38,24 @@ If the UI button doesn't work or you're testing programmatically:
 You can manually extract and enter your Intranet cookie:
 
 1. **Get your cookie:**
-   - Open https://intra.epitech.eu in Chrome/Firefox
-   - Login with your Office365 account
-   - Open Developer Tools (F12)
-   - Go to Application tab → Cookies → https://intra.epitech.eu
-   - Find the `user` cookie and copy its value
+    - Open https://intra.epitech.eu in Chrome/Firefox
+    - Login with your Office365 account
+    - Open Developer Tools (F12)
+    - Go to Application tab → Cookies → https://intra.epitech.eu
+    - Find the `user` cookie and copy its value
 
 2. **Set the cookie in the app:**
-   - Add this to your code (e.g., in App.tsx or a test file)
+    - Add this to your code (e.g., in App.tsx or a test file)
 
 ```typescript
 // In App.tsx or LoginScreen.tsx
-import intraAuth from './services/intraAuth';
+import intraAuth from "./services/intraAuth";
 
 // Manually set your cookie (run this once)
 async function setTestCookie() {
-  const yourCookie = 'YOUR_COOKIE_VALUE_HERE';
-  await intraAuth.setTestCookie(yourCookie);
-  console.log('Cookie set successfully');
+    const yourCookie = "YOUR_COOKIE_VALUE_HERE";
+    await intraAuth.setTestCookie(yourCookie);
+    console.log("Cookie set successfully");
 }
 
 // Call this before testing
@@ -82,8 +82,8 @@ npx expo install react-native-webview
 Then update `services/intraAuth.ts` to use WebView instead of WebBrowser:
 
 ```typescript
-import { WebView } from 'react-native-webview';
-import CookieManager from '@react-native-cookies/cookies';
+import { WebView } from "react-native-webview";
+import CookieManager from "@react-native-cookies/cookies";
 
 // In authenticateWithIntranet():
 // Use WebView component to load OAuth URL

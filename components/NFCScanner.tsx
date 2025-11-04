@@ -111,7 +111,7 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
                     // Decode NDEF payload (skip first byte for text records)
                     const textDecoder = new TextDecoder("utf-8");
                     const text = textDecoder.decode(
-                        new Uint8Array(payload.slice(1))
+                        new Uint8Array(payload.slice(1)),
                     );
                     email = text;
                 } else if (tag.id) {
@@ -120,7 +120,7 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
                     const idBytes = Array.isArray(tag.id) ? tag.id : [tag.id];
                     const tagId = idBytes
                         .map((byte) =>
-                            Number(byte).toString(16).padStart(2, "0")
+                            Number(byte).toString(16).padStart(2, "0"),
                         )
                         .join("");
                     email = tagId; // Or lookup email from tagId
@@ -189,13 +189,13 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
     if (Platform.OS === "web") {
         return (
             <View className="flex-1 items-center justify-center bg-epitech-gray px-4">
-                <View className="w-24 h-24 bg-gray-300 rounded-full items-center justify-center mb-4">
+                <View className="mb-4 h-24 w-24 items-center justify-center rounded-full bg-gray-300">
                     <Text className="text-5xl">📱</Text>
                 </View>
-                <Text className="text-epitech-navy text-xl font-bold mb-2">
+                <Text className="mb-2 text-xl font-bold text-epitech-navy">
                     NFC Not Available
                 </Text>
-                <Text className="text-epitech-gray-dark text-center">
+                <Text className="text-center text-epitech-gray-dark">
                     NFC scanning is only available on mobile devices.{"\n"}
                     Please use QR code scanning instead.
                 </Text>
@@ -206,16 +206,16 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
     if (!isNfcSupported) {
         return (
             <View className="flex-1 items-center justify-center bg-epitech-gray px-4">
-                <View className="w-24 h-24 bg-red-100 rounded-full items-center justify-center mb-4">
+                <View className="mb-4 h-24 w-24 items-center justify-center rounded-full bg-red-100">
                     <Text className="text-5xl">⚠️</Text>
                 </View>
-                <Text className="text-red-600 text-xl font-bold mb-2">
+                <Text className="mb-2 text-xl font-bold text-red-600">
                     NFC Not Supported
                 </Text>
-                <Text className="text-epitech-gray-dark text-center mb-2">
+                <Text className="mb-2 text-center text-epitech-gray-dark">
                     {message}
                 </Text>
-                <Text className="text-gray-500 text-center text-sm">
+                <Text className="text-center text-sm text-gray-500">
                     Please use QR code scanning or try on a different device.
                 </Text>
             </View>
@@ -224,19 +224,19 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
 
     return (
         <View className="flex-1 items-center justify-center bg-epitech-navy px-6">
-            <View className="bg-white rounded-3xl p-8 items-center max-w-sm w-full">
+            <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8">
                 {/* NFC Icon */}
-                <View className="w-32 h-32 bg-epitech-blue rounded-full items-center justify-center mb-6">
-                    <Text className="text-white text-7xl">📱</Text>
+                <View className="mb-6 h-32 w-32 items-center justify-center rounded-full bg-epitech-blue">
+                    <Text className="text-7xl text-white">📱</Text>
                 </View>
 
-                <Text className="text-2xl font-bold text-epitech-navy mb-3 text-center">
+                <Text className="mb-3 text-center text-2xl font-bold text-epitech-navy">
                     NFC Scanner Ready
                 </Text>
 
                 {/* Status Message */}
-                <View className="bg-epitech-gray rounded-xl px-4 py-3 mb-6 w-full">
-                    <Text className="text-epitech-navy text-center font-medium">
+                <View className="mb-6 w-full rounded-xl bg-epitech-gray px-4 py-3">
+                    <Text className="text-center font-medium text-epitech-navy">
                         {message}
                     </Text>
                 </View>
@@ -244,7 +244,7 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
                 {/* Scanning Animation */}
                 {isScanning && (
                     <View className="mb-4">
-                        <View className="w-16 h-16 border-4 border-epitech-blue border-t-transparent rounded-full" />
+                        <View className="h-16 w-16 rounded-full border-4 border-epitech-blue border-t-transparent" />
                     </View>
                 )}
 
@@ -252,9 +252,9 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
                 {!isScanning && isActive && (
                     <TouchableOpacity
                         onPress={handleManualScan}
-                        className="bg-epitech-blue px-8 py-4 rounded-xl w-full"
+                        className="w-full rounded-xl bg-epitech-blue px-8 py-4"
                     >
-                        <Text className="text-white font-bold text-center text-base uppercase tracking-wide">
+                        <Text className="text-center text-base font-bold uppercase tracking-wide text-white">
                             Start Scanning
                         </Text>
                     </TouchableOpacity>
@@ -262,8 +262,8 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
             </View>
 
             {/* Instructions */}
-            <View className="mt-8 bg-white/10 px-6 py-3 rounded-full">
-                <Text className="text-white text-sm text-center font-medium">
+            <View className="mt-8 rounded-full bg-white/10 px-6 py-3">
+                <Text className="text-center text-sm font-medium text-white">
                     Hold the student card close to your device
                 </Text>
             </View>

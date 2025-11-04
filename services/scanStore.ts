@@ -25,38 +25,38 @@
  * THE SOFTWARE.
  */
 
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
-const LAST_QR_KEY = 'last_qr_email';
+const LAST_QR_KEY = "last_qr_email";
 
 async function setLastQrEmail(email: string): Promise<void> {
-  try {
-    await SecureStore.setItemAsync(LAST_QR_KEY, email);
-  } catch (e) {
-    // fallback: ignore
-    // console.warn('Failed to persist last QR email', e);
-  }
+    try {
+        await SecureStore.setItemAsync(LAST_QR_KEY, email);
+    } catch (e) {
+        // fallback: ignore
+        // console.warn('Failed to persist last QR email', e);
+    }
 }
 
 async function getLastQrEmail(): Promise<string | null> {
-  try {
-    const v = await SecureStore.getItemAsync(LAST_QR_KEY);
-    return v;
-  } catch (e) {
-    return null;
-  }
+    try {
+        const v = await SecureStore.getItemAsync(LAST_QR_KEY);
+        return v;
+    } catch (e) {
+        return null;
+    }
 }
 
 async function clearLastQrEmail(): Promise<void> {
-  try {
-    await SecureStore.deleteItemAsync(LAST_QR_KEY);
-  } catch (e) {
-    // ignore
-  }
+    try {
+        await SecureStore.deleteItemAsync(LAST_QR_KEY);
+    } catch (e) {
+        // ignore
+    }
 }
 
 export default {
-  setLastQrEmail,
-  getLastQrEmail,
-  clearLastQrEmail,
+    setLastQrEmail,
+    getLastQrEmail,
+    clearLastQrEmail,
 };

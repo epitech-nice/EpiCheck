@@ -50,6 +50,7 @@ If you want to go back to the original sounds:
 ## Default Sounds
 
 The app comes with a default metal pipe clang sound for both success and error events. This sound:
+
 - Works in silent mode (iOS)
 - Doesn't require permissions
 - Is optimized for quick playback
@@ -60,6 +61,7 @@ The app comes with a default metal pipe clang sound for both success and error e
 ### Storage Location
 
 Custom sounds are stored in:
+
 ```
 {AppDocumentDirectory}/sounds/
   - success.mp3 (custom success sound)
@@ -128,6 +130,7 @@ soundService.hasCustomErrorSound()    // boolean
 ## Example Sound Sources
 
 Good places to find appropriate sounds:
+
 - **Freesound.org** - Free sound effects
 - **Zapsplat.com** - Free sound effects library
 - **Create Your Own** - Record or generate custom sounds
@@ -136,12 +139,14 @@ Good places to find appropriate sounds:
 ## Recommended Sounds
 
 ### Success
+
 - Short bell chime
 - Positive beep
 - Quick "ding" sound
 - Gentle notification tone
 
-### Error  
+### Error
+
 - Lower-pitched beep
 - Buzzer sound
 - "Boop" or rejection sound

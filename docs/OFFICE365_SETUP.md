@@ -24,20 +24,22 @@ Before the app can work, you **MUST** register the app in Azure AD and configure
 **Name**: `EpiCheck` (or your preferred name)
 
 **Supported account types**: Select one of:
+
 - `Accounts in any organizational directory (Any Azure AD directory - Multitenant)` - Recommended
 - `Accounts in this organizational directory only (Epitech only)` - If you have access to Epitech's tenant
 
-**Redirect URI**: 
+**Redirect URI**:
+
 - Platform: `Public client/native (mobile & desktop)`
 - Add these redirect URIs:
-  ```
-  exp://localhost:8081/auth
-  epiccheck://auth
-  ```
+    ```
+    exp://localhost:8081/auth
+    epiccheck://auth
+    ```
 - For production, also add:
-  ```
-  exp://your-production-domain/auth
-  ```
+    ```
+    exp://your-production-domain/auth
+    ```
 
 Click **Register**
 
@@ -60,11 +62,11 @@ Click **Register**
 3. Select **Microsoft Graph**
 4. Select **Delegated permissions**
 5. Add these permissions:
-   - `openid`
-   - `profile`
-   - `email`
-   - `User.Read`
-   - `offline_access`
+    - `openid`
+    - `profile`
+    - `email`
+    - `User.Read`
+    - `offline_access`
 6. Click **Add permissions**
 7. (Optional) Click **Grant admin consent** if you have admin rights
 
@@ -78,24 +80,18 @@ Open `/services/office365Auth.ts` and update the configuration:
 
 ```typescript
 const AZURE_AD_CONFIG = {
-  // Replace with your Client ID from Step 1.3
-  clientId: 'YOUR_CLIENT_ID_HERE',
-  
-  // Use 'organizations' for multi-tenant OR your specific tenant ID
-  tenantId: 'organizations', // or 'YOUR_EPITECH_TENANT_ID'
-  
-  scopes: [
-    'openid',
-    'profile',
-    'email',
-    'User.Read',
-    'offline_access',
-  ],
-  
-  redirectUri: AuthSession.makeRedirectUri({
-    scheme: 'epiccheck',
-    path: 'auth',
-  }),
+    // Replace with your Client ID from Step 1.3
+    clientId: "YOUR_CLIENT_ID_HERE",
+
+    // Use 'organizations' for multi-tenant OR your specific tenant ID
+    tenantId: "organizations", // or 'YOUR_EPITECH_TENANT_ID'
+
+    scopes: ["openid", "profile", "email", "User.Read", "offline_access"],
+
+    redirectUri: AuthSession.makeRedirectUri({
+        scheme: "epiccheck",
+        path: "auth",
+    }),
 };
 ```
 
@@ -118,9 +114,9 @@ Then update `office365Auth.ts` to use environment variables:
 
 ```typescript
 const AZURE_AD_CONFIG = {
-  clientId: process.env.EXPO_PUBLIC_AZURE_CLIENT_ID || 'YOUR_CLIENT_ID_HERE',
-  tenantId: process.env.EXPO_PUBLIC_AZURE_TENANT_ID || 'organizations',
-  // ... rest of config
+    clientId: process.env.EXPO_PUBLIC_AZURE_CLIENT_ID || "YOUR_CLIENT_ID_HERE",
+    tenantId: process.env.EXPO_PUBLIC_AZURE_TENANT_ID || "organizations",
+    // ... rest of config
 };
 ```
 
@@ -167,7 +163,7 @@ The app automatically validates that users sign in with `@epitech.eu` emails. No
        │
        ├─> Check SecureStore for token
        │
-       ├─> Token exists & valid? 
+       ├─> Token exists & valid?
        │   ├─> Yes: Auto-login ✓
        │   └─> No: Show Login Screen
        │
@@ -223,10 +219,13 @@ The app automatically validates that users sign in with `@epitech.eu` emails. No
 ### "AADSTS50011: The reply URL specified in the request does not match"
 
 **Solution**: Add the redirect URI to Azure AD:
+
 1. Get the redirect URI by running:
-   ```typescript
-   console.log(AuthSession.makeRedirectUri({ scheme: 'epiccheck', path: 'auth' }));
-   ```
+    ```typescript
+    console.log(
+        AuthSession.makeRedirectUri({ scheme: "epiccheck", path: "auth" }),
+    );
+    ```
 2. Add this exact URI to Azure AD **Authentication** → **Redirect URIs**
 
 ### "Invalid client"
@@ -236,13 +235,15 @@ The app automatically validates that users sign in with `@epitech.eu` emails. No
 ### "AADSTS700016: Application not found"
 
 **Solution**: Check that:
+
 - Client ID is correct
 - App registration is in the correct tenant
 - Tenant ID is correct (or use 'organizations')
 
 ### Login popup doesn't appear
 
-**Solution**: 
+**Solution**:
+
 - Ensure `expo-web-browser` is installed
 - Check device/browser popup settings
 - Try on different device/platform
@@ -254,6 +255,7 @@ The app automatically validates that users sign in with `@epitech.eu` emails. No
 ### Token expired errors
 
 **Solution**: Refresh token should handle this automatically. If persists:
+
 1. Logout and login again
 2. Clear app data/cache
 3. Check refresh token in Azure AD permissions
@@ -265,24 +267,27 @@ The app automatically validates that users sign in with `@epitech.eu` emails. No
 ### For EAS Build
 
 1. Update `app.json`:
+
 ```json
 {
-  "expo": {
-    "scheme": "epiccheck",
-    "extra": {
-      "azureClientId": "your-client-id"
+    "expo": {
+        "scheme": "epiccheck",
+        "extra": {
+            "azureClientId": "your-client-id"
+        }
     }
-  }
 }
 ```
 
 2. Add production redirect URI in Azure AD:
+
 ```
 epiccheck://auth
 https://your-production-url/auth
 ```
 
 3. Build:
+
 ```bash
 eas build --platform android
 eas build --platform ios
@@ -291,6 +296,7 @@ eas build --platform ios
 ### For Standalone Apps
 
 Ensure redirect URIs include:
+
 - iOS: `epiccheck://auth`
 - Android: `epiccheck://auth`
 - Web: `https://your-domain/auth`
@@ -300,6 +306,7 @@ Ensure redirect URIs include:
 ## Security Considerations
 
 ✅ **What's Secure:**
+
 - OAuth 2.0 + PKCE flow
 - Tokens stored in device secure storage
 - No passwords stored in app
@@ -307,6 +314,7 @@ Ensure redirect URIs include:
 - Domain validation (@epitech.eu only)
 
 ⚠️ **Important:**
+
 - Never commit Client ID to public repositories
 - Use environment variables for sensitive data
 - Regularly rotate Client Secrets (if using)
@@ -317,6 +325,7 @@ Ensure redirect URIs include:
 ## Support
 
 For issues with:
+
 - **Azure AD setup**: Contact Epitech IT administrators
 - **App configuration**: Check this guide and `services/office365Auth.ts`
 - **Authentication errors**: Check Azure AD sign-in logs in Azure Portal

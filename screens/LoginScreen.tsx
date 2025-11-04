@@ -84,7 +84,10 @@ export default function LoginScreen() {
                 navigation.replace("Activities");
                 // Show success after navigation
                 setTimeout(() => {
-                    Alert.alert("Success", `Welcome ${userInfo.title || userInfo.login}!`);
+                    Alert.alert(
+                        "Success",
+                        `Welcome ${userInfo.title || userInfo.login}!`,
+                    );
                 }, 100);
             }, 100);
         } catch (error: any) {
@@ -92,7 +95,7 @@ export default function LoginScreen() {
             setIsLoading(false);
             Alert.alert(
                 "Login Failed",
-                error.message || "Failed to authenticate with Epitech Intranet"
+                error.message || "Failed to authenticate with Epitech Intranet",
             );
         }
     };
@@ -121,32 +124,32 @@ export default function LoginScreen() {
 
             <View className="flex-1 justify-center px-8">
                 {/* Logo Section */}
-                <View className="items-center mb-12">
-                    <View className="w-20 h-20 bg-epitech-blue rounded-2xl items-center justify-center mb-4">
-                        <Text className="text-white text-4xl font-bold">E</Text>
+                <View className="mb-12 items-center">
+                    <View className="mb-4 h-20 w-20 items-center justify-center rounded-2xl bg-epitech-blue">
+                        <Text className="text-4xl font-bold text-white">E</Text>
                     </View>
-                    <Text className="text-3xl font-bold text-epitech-navy mb-1">
+                    <Text className="mb-1 text-3xl font-bold text-epitech-navy">
                         EpiCheck
                     </Text>
-                    <Text className="text-epitech-gray-dark text-center text-sm">
+                    <Text className="text-center text-sm text-epitech-gray-dark">
                         Student Presence Management System
                     </Text>
                 </View>
 
-                <View className="bg-white rounded-2xl p-8 border border-gray-200">
+                <View className="rounded-2xl border border-gray-200 bg-white p-8">
                     {/* Info Section */}
                     <View className="mb-6">
-                        <Text className="text-epitech-navy font-bold text-lg mb-2 text-center">
+                        <Text className="mb-2 text-center text-lg font-bold text-epitech-navy">
                             Sign in with Intranet
                         </Text>
-                        <Text className="text-epitech-gray-dark text-center text-sm">
+                        <Text className="text-center text-sm text-epitech-gray-dark">
                             Use your Epitech account to continue
                         </Text>
                     </View>
 
                     {/* Epitech Logo Icon */}
-                    <View className="items-center mb-6">
-                        <View className="w-16 h-16 bg-epitech-blue border-2 border-epitech-blue rounded-2xl items-center justify-center">
+                    <View className="mb-6 items-center">
+                        <View className="h-16 w-16 items-center justify-center rounded-2xl border-2 border-epitech-blue bg-epitech-blue">
                             <Text className="text-4xl">�</Text>
                         </View>
                     </View>
@@ -155,7 +158,7 @@ export default function LoginScreen() {
                     <TouchableOpacity
                         onPress={handleIntranetLogin}
                         disabled={isLoading}
-                        className={`rounded-lg py-4 items-center flex-row justify-center ${
+                        className={`flex-row items-center justify-center rounded-lg py-4 ${
                             isLoading ? "bg-gray-400" : "bg-epitech-blue"
                         }`}
                     >
@@ -163,8 +166,8 @@ export default function LoginScreen() {
                             <ActivityIndicator color="white" />
                         ) : (
                             <>
-                                <Text className="text-2xl mr-3">🔐</Text>
-                                <Text className="text-white font-bold text-base uppercase tracking-wide">
+                                <Text className="mr-3 text-2xl">🔐</Text>
+                                <Text className="text-base font-bold uppercase tracking-wide text-white">
                                     Sign in with Epitech
                                 </Text>
                             </>
@@ -172,20 +175,20 @@ export default function LoginScreen() {
                     </TouchableOpacity>
 
                     {/* Security Note */}
-                    <View className="mt-6 bg-blue-50 p-3 rounded-lg">
-                        <Text className="text-epitech-navy text-xs text-center font-medium">
+                    <View className="mt-6 rounded-lg bg-blue-50 p-3">
+                        <Text className="text-center text-xs font-medium text-epitech-navy">
                             🔒 Secure authentication via Epitech Intranet
                         </Text>
                     </View>
 
                     {/* Footer */}
-                    <Text className="text-gray-500 text-center mt-4 text-xs">
+                    <Text className="mt-4 text-center text-xs text-gray-500">
                         Uses your Epitech Office365 credentials
                     </Text>
                 </View>
 
                 {/* Bottom Info */}
-                <Text className="text-gray-400 text-center mt-8 text-xs">
+                <Text className="mt-8 text-center text-xs text-gray-400">
                     Powered by Epitech Intranet • Secure Authentication
                 </Text>
             </View>

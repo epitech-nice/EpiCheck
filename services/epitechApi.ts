@@ -53,7 +53,7 @@ class EpitechApiService {
                 }
                 return config;
             },
-            (error) => Promise.reject(error)
+            (error) => Promise.reject(error),
         );
     }
 
@@ -72,10 +72,10 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Login error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error(
-                error.response?.data?.message || "Authentication failed"
+                error.response?.data?.message || "Authentication failed",
             );
         }
     }
@@ -96,7 +96,7 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Get user info error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch user information");
         }
@@ -106,90 +106,129 @@ class EpitechApiService {
      * Mark student presence using Intranet API
      * Requires an event context to mark presence
      */
-    async markPresence(studentEmail: string, event?: IIntraEvent): Promise<any> {
+    async markPresence(
+        studentEmail: string,
+        event?: IIntraEvent,
+    ): Promise<any> {
         try {
-            console.log('Marking presence for:', studentEmail);
-            console.log('Event:', event ? event.acti_title : 'No event');
+            console.log("Marking presence for:", studentEmail);
+            console.log("Event:", event ? event.acti_title : "No event");
 
             // Get login from email
             const login = intraApi.getLoginFromEmail(studentEmail);
-            console.log('Extracted login:', login);
+            console.log("Extracted login:", login);
 
             if (!event) {
                 // If no event provided, we can't mark presence on Intranet
                 throw new Error(
-                    "Event context required to mark presence. Please select an activity first."
+                    "Event context required to mark presence. Please select an activity first.",
                 );
             }
 
             // First, check if student is registered for this event
-            console.log('📋 Checking if student is registered for event...');
-            const registeredStudents = await intraApi.getRegisteredStudents(event);
-            console.log(`📋 Found ${registeredStudents.length} registered students`);
+            console.log("📋 Checking if student is registered for event...");
+            const registeredStudents =
+                await intraApi.getRegisteredStudents(event);
+            console.log(
+                `📋 Found ${registeredStudents.length} registered students`,
+            );
 
             // Log first few students for debugging
-            console.log('📋 Sample registered students:');
-            registeredStudents.slice(0, 3).forEach(s => {
-                console.log(`  - login: "${s.login}", email: "${s.email}", title: "${s.title}"`);
+            console.log("📋 Sample registered students:");
+            registeredStudents.slice(0, 3).forEach((s) => {
+                console.log(
+                    `  - login: "${s.login}", email: "${s.email}", title: "${s.title}"`,
+                );
             });
 
             // Find the student in the registered list
             // The Intranet API sometimes returns email in the login field
-            console.log(`📋 Searching for: login="${login}" OR email="${studentEmail}"`);
-            const student = registeredStudents.find(s => {
+            console.log(
+                `📋 Searching for: login="${login}" OR email="${studentEmail}"`,
+            );
+            const student = registeredStudents.find((s) => {
                 // Try exact match on login
                 if (s.login === login) {
-                    console.log(`✓ Match found: s.login === login ("${s.login}" === "${login}")`);
+                    console.log(
+                        `✓ Match found: s.login === login ("${s.login}" === "${login}")`,
+                    );
                     return true;
                 }
                 // Try exact match on email
                 if (s.login === studentEmail) {
-                    console.log(`✓ Match found: s.login === studentEmail ("${s.login}" === "${studentEmail}")`);
+                    console.log(
+                        `✓ Match found: s.login === studentEmail ("${s.login}" === "${studentEmail}")`,
+                    );
                     return true;
                 }
                 if (s.email === studentEmail) {
-                    console.log(`✓ Match found: s.email === studentEmail ("${s.email}" === "${studentEmail}")`);
+                    console.log(
+                        `✓ Match found: s.email === studentEmail ("${s.email}" === "${studentEmail}")`,
+                    );
                     return true;
                 }
                 // Try login with @epitech.eu
                 if (s.login === `${login}@epitech.eu`) {
-                    console.log(`✓ Match found: s.login === login@epitech.eu ("${s.login}" === "${login}@epitech.eu")`);
+                    console.log(
+                        `✓ Match found: s.login === login@epitech.eu ("${s.login}" === "${login}@epitech.eu")`,
+                    );
                     return true;
                 }
                 // Try removing @epitech.eu from student login
-                const studentLoginWithoutDomain = s.login?.split('@')[0];
+                const studentLoginWithoutDomain = s.login?.split("@")[0];
                 if (studentLoginWithoutDomain === login) {
-                    console.log(`✓ Match found: s.login split === login ("${studentLoginWithoutDomain}" === "${login}")`);
+                    console.log(
+                        `✓ Match found: s.login split === login ("${studentLoginWithoutDomain}" === "${login}")`,
+                    );
                     return true;
                 }
                 return false;
             });
 
             if (!student) {
-                console.error('Student not found in registered list');
-                console.error('Looking for login:', login, 'or email:', studentEmail);
-                console.error('All registered students:', registeredStudents.map(s => ({ login: s.login, email: s.email })));
+                console.error("Student not found in registered list");
+                console.error(
+                    "Looking for login:",
+                    login,
+                    "or email:",
+                    studentEmail,
+                );
+                console.error(
+                    "All registered students:",
+                    registeredStudents.map((s) => ({
+                        login: s.login,
+                        email: s.email,
+                    })),
+                );
                 throw new Error(
                     `Student not found in registered list.\n\n` +
-                    `Scanned: ${studentEmail}\n` +
-                    `Login: ${login}\n\n` +
-                    `This student might not be registered for: ${event.acti_title}\n\n` +
-                    `Registered students: ${registeredStudents.length} total`
+                        `Scanned: ${studentEmail}\n` +
+                        `Login: ${login}\n\n` +
+                        `This student might not be registered for: ${event.acti_title}\n\n` +
+                        `Registered students: ${registeredStudents.length} total`,
                 );
             }
 
-            console.log('✅ Student found in registered list:', student.login);
+            console.log("✅ Student found in registered list:", student.login);
 
             // IMPORTANT: Use the login EXACTLY as it appears in the registered list
             // The Intranet expects the same format it provides
             const actualLogin = student.login;
-            console.log('✅ Using login for marking (unchanged from registered list):', actualLogin);
+            console.log(
+                "✅ Using login for marking (unchanged from registered list):",
+                actualLogin,
+            );
 
             // Mark presence on Intranet for the specific event
-            console.log('📤 Calling intraApi.markStudentPresent with login:', actualLogin);
+            console.log(
+                "📤 Calling intraApi.markStudentPresent with login:",
+                actualLogin,
+            );
             await intraApi.markStudentPresent(event, actualLogin);
 
-            console.log(`✓ Marked ${actualLogin} present for event: ${event.acti_title}`);
+            console.log(
+                `✓ Marked ${actualLogin} present for event: ${event.acti_title}`,
+            );
 
             return {
                 success: true,
@@ -201,10 +240,12 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Mark presence error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error(
-                error.response?.data?.message || error.message || "Failed to mark presence"
+                error.response?.data?.message ||
+                    error.message ||
+                    "Failed to mark presence",
             );
         }
     }
@@ -215,13 +256,13 @@ class EpitechApiService {
     async getStudentByEmail(email: string): Promise<any> {
         try {
             const response = await this.api.get(
-                `/students/${encodeURIComponent(email)}`
+                `/students/${encodeURIComponent(email)}`,
             );
             return response.data;
         } catch (error: any) {
             console.error(
                 "Get student error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Student not found");
         }
@@ -237,7 +278,7 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Get presence list error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch presence list");
         }
@@ -286,15 +327,20 @@ class EpitechApiService {
             // Get today's date in YYYY-MM-DD format (padded with zeros)
             const today = new Date();
             const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const day = String(today.getDate()).padStart(2, "0");
             const dateStr = `${year}-${month}-${day}`;
 
-            console.log('Fetching activities for date:', dateStr, 'location:', user.location);
+            console.log(
+                "Fetching activities for date:",
+                dateStr,
+                "location:",
+                user.location,
+            );
 
             const activities = await intraApi.getActivities(
                 user.location,
-                dateStr
+                dateStr,
             );
 
             // Filter to only activities where user has rights
@@ -311,7 +357,7 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Get today activities error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch today's activities");
         }
@@ -326,7 +372,7 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Get event students error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch event students");
         }
@@ -347,7 +393,7 @@ class EpitechApiService {
         } catch (error: any) {
             console.error(
                 "Get intra user error:",
-                error.response?.data || error.message
+                error.response?.data || error.message,
             );
             throw new Error("Failed to fetch intra user");
         }

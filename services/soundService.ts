@@ -27,12 +27,12 @@
  * THE SOFTWARE.
  */
 
-import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
+import { Audio } from "expo-av";
+import * as FileSystem from "expo-file-system";
 
 // Default sounds
-const DEFAULT_SUCCESS_SOUND = require('../assets/sounds/metal-pipe-clang.mp3');
-const DEFAULT_ERROR_SOUND = require('../assets/sounds/metal-pipe-clang.mp3'); // Using same for now
+const DEFAULT_SUCCESS_SOUND = require("../assets/sounds/metal-pipe-clang.mp3");
+const DEFAULT_ERROR_SOUND = require("../assets/sounds/metal-pipe-clang.mp3"); // Using same for now
 
 // Custom sound paths (stored in app's document directory)
 const CUSTOM_SOUNDS_DIR = `${FileSystem.documentDirectory}sounds/`;
@@ -56,13 +56,15 @@ class SoundService {
             // Ensure sounds directory exists
             const dirInfo = await FileSystem.getInfoAsync(CUSTOM_SOUNDS_DIR);
             if (!dirInfo.exists) {
-                await FileSystem.makeDirectoryAsync(CUSTOM_SOUNDS_DIR, { intermediates: true });
+                await FileSystem.makeDirectoryAsync(CUSTOM_SOUNDS_DIR, {
+                    intermediates: true,
+                });
             }
 
             // Check if custom sounds exist
             await this.loadCustomSounds();
         } catch (error) {
-            console.error('Failed to initialize audio:', error);
+            console.error("Failed to initialize audio:", error);
         }
     }
 
@@ -71,19 +73,20 @@ class SoundService {
      */
     private async loadCustomSounds() {
         try {
-            const successInfo = await FileSystem.getInfoAsync(CUSTOM_SUCCESS_PATH);
+            const successInfo =
+                await FileSystem.getInfoAsync(CUSTOM_SUCCESS_PATH);
             if (successInfo.exists) {
                 this.customSuccessSound = CUSTOM_SUCCESS_PATH;
-                console.log('✓ Custom success sound loaded');
+                console.log("✓ Custom success sound loaded");
             }
 
             const errorInfo = await FileSystem.getInfoAsync(CUSTOM_ERROR_PATH);
             if (errorInfo.exists) {
                 this.customErrorSound = CUSTOM_ERROR_PATH;
-                console.log('✓ Custom error sound loaded');
+                console.log("✓ Custom error sound loaded");
             }
         } catch (error) {
-            console.error('Failed to load custom sounds:', error);
+            console.error("Failed to load custom sounds:", error);
         }
     }
 
@@ -100,10 +103,10 @@ class SoundService {
             });
 
             this.customSuccessSound = CUSTOM_SUCCESS_PATH;
-            console.log('✓ Custom success sound imported');
+            console.log("✓ Custom success sound imported");
         } catch (error) {
-            console.error('Failed to import success sound:', error);
-            throw new Error('Failed to import success sound');
+            console.error("Failed to import success sound:", error);
+            throw new Error("Failed to import success sound");
         }
     }
 
@@ -120,10 +123,10 @@ class SoundService {
             });
 
             this.customErrorSound = CUSTOM_ERROR_PATH;
-            console.log('✓ Custom error sound imported');
+            console.log("✓ Custom error sound imported");
         } catch (error) {
-            console.error('Failed to import error sound:', error);
-            throw new Error('Failed to import error sound');
+            console.error("Failed to import error sound:", error);
+            throw new Error("Failed to import error sound");
         }
     }
 
@@ -137,9 +140,9 @@ class SoundService {
                 await FileSystem.deleteAsync(CUSTOM_SUCCESS_PATH);
             }
             this.customSuccessSound = null;
-            console.log('✓ Success sound reset to default');
+            console.log("✓ Success sound reset to default");
         } catch (error) {
-            console.error('Failed to reset success sound:', error);
+            console.error("Failed to reset success sound:", error);
         }
     }
 
@@ -153,9 +156,9 @@ class SoundService {
                 await FileSystem.deleteAsync(CUSTOM_ERROR_PATH);
             }
             this.customErrorSound = null;
-            console.log('✓ Error sound reset to default');
+            console.log("✓ Error sound reset to default");
         } catch (error) {
-            console.error('Failed to reset error sound:', error);
+            console.error("Failed to reset error sound:", error);
         }
     }
 
@@ -195,15 +198,12 @@ class SoundService {
             }
 
             // Determine which sound to play
-            const soundSource = customPath 
-                ? { uri: customPath }
-                : defaultSound;
+            const soundSource = customPath ? { uri: customPath } : defaultSound;
 
             // Load and play the sound
-            const { sound } = await Audio.Sound.createAsync(
-                soundSource,
-                { shouldPlay: true }
-            );
+            const { sound } = await Audio.Sound.createAsync(soundSource, {
+                shouldPlay: true,
+            });
 
             this.sound = sound;
 
@@ -214,7 +214,7 @@ class SoundService {
                 }
             });
         } catch (error) {
-            console.error('Failed to play sound:', error);
+            console.error("Failed to play sound:", error);
         }
     }
 
@@ -225,7 +225,7 @@ class SoundService {
                 this.sound = null;
             }
         } catch (error) {
-            console.error('Failed to cleanup sound:', error);
+            console.error("Failed to cleanup sound:", error);
         }
     }
 }

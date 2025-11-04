@@ -70,13 +70,16 @@ export default function ActivitiesScreen() {
 
     const loadActivities = async () => {
         try {
-            console.log('Loading today\'s activities...');
+            console.log("Loading today's activities...");
             const data = await epitechApi.getTodayActivities();
-            console.log('Activities loaded:', data.length, 'events');
+            console.log("Activities loaded:", data.length, "events");
             setActivities(data);
         } catch (error: any) {
             console.error("Load activities error:", error);
-            console.error("Error details:", error.response?.data || error.message);
+            console.error(
+                "Error details:",
+                error.response?.data || error.message,
+            );
 
             // If session expired, prompt to re-login
             if (error.message.includes("Session expired")) {
@@ -94,7 +97,7 @@ export default function ActivitiesScreen() {
                                     Alert.alert(
                                         "Error",
                                         authError.message ||
-                                            "Failed to authenticate"
+                                            "Failed to authenticate",
                                     );
                                     handleLogout();
                                 }
@@ -105,12 +108,12 @@ export default function ActivitiesScreen() {
                             style: "destructive",
                             onPress: handleLogout,
                         },
-                    ]
+                    ],
                 );
             } else {
                 Alert.alert(
                     "Error",
-                    error.message || "Failed to load activities"
+                    error.message || "Failed to load activities",
                 );
             }
         } finally {
@@ -175,9 +178,9 @@ export default function ActivitiesScreen() {
     if (loading) {
         return (
             <SafeAreaView className="flex-1 bg-epitech-gray">
-                <View className="flex-1 justify-center items-center">
+                <View className="flex-1 items-center justify-center">
                     <ActivityIndicator size="large" color="#00B8D4" />
-                    <Text className="text-epitech-navy mt-4 font-semibold">
+                    <Text className="mt-4 font-semibold text-epitech-navy">
                         Loading activities...
                     </Text>
                 </View>
@@ -189,18 +192,18 @@ export default function ActivitiesScreen() {
         <SafeAreaView className="flex-1 bg-epitech-gray">
             {/* Header */}
             <View className="bg-epitech-blue px-4 py-5">
-                <View className="flex-row justify-between items-center mb-2">
-                    <View className="flex-row items-center flex-1">
-                        <View className="w-10 h-10 bg-white rounded-lg items-center justify-center mr-3">
-                            <Text className="text-epitech-blue text-xl font-bold">
+                <View className="mb-2 flex-row items-center justify-between">
+                    <View className="flex-1 flex-row items-center">
+                        <View className="mr-3 h-10 w-10 items-center justify-center rounded-lg bg-white">
+                            <Text className="text-xl font-bold text-epitech-blue">
                                 E
                             </Text>
                         </View>
                         <View className="flex-1">
-                            <Text className="text-white text-2xl font-bold">
+                            <Text className="text-2xl font-bold text-white">
                                 Today's Activities
                             </Text>
-                            <Text className="text-white/80 text-xs">
+                            <Text className="text-xs text-white/80">
                                 {new Date().toLocaleDateString("en-US", {
                                     weekday: "long",
                                     year: "numeric",
@@ -213,17 +216,17 @@ export default function ActivitiesScreen() {
                     <View className="flex-row gap-2">
                         <TouchableOpacity
                             onPress={() => navigation.navigate("Settings")}
-                            className="bg-white/20 px-3 py-2 rounded-lg border border-white/30"
+                            className="rounded-lg border border-white/30 bg-white/20 px-3 py-2"
                         >
-                            <Text className="text-white font-semibold text-xs">
+                            <Text className="text-xs font-semibold text-white">
                                 ⚙️ Settings
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleLogout}
-                            className="bg-white/20 px-3 py-2 rounded-lg border border-white/30"
+                            className="rounded-lg border border-white/30 bg-white/20 px-3 py-2"
                         >
-                            <Text className="text-white font-semibold text-xs">
+                            <Text className="text-xs font-semibold text-white">
                                 Logout
                             </Text>
                         </TouchableOpacity>
@@ -233,9 +236,9 @@ export default function ActivitiesScreen() {
                 {/* Quick scan button */}
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Presence", {})}
-                    className="bg-white/20 px-4 py-3 rounded-lg border border-white/30 mt-3"
+                    className="mt-3 rounded-lg border border-white/30 bg-white/20 px-4 py-3"
                 >
-                    <Text className="text-white font-semibold text-center">
+                    <Text className="text-center font-semibold text-white">
                         📷 Quick Scan (No Event)
                     </Text>
                 </TouchableOpacity>
@@ -252,12 +255,12 @@ export default function ActivitiesScreen() {
                 }
             >
                 {activities.length === 0 ? (
-                    <View className="flex-1 justify-center items-center py-20">
-                        <Text className="text-6xl mb-4">📅</Text>
-                        <Text className="text-epitech-navy text-lg font-bold">
+                    <View className="flex-1 items-center justify-center py-20">
+                        <Text className="mb-4 text-6xl">📅</Text>
+                        <Text className="text-lg font-bold text-epitech-navy">
                             No activities today
                         </Text>
-                        <Text className="text-epitech-gray-dark text-sm mt-2">
+                        <Text className="mt-2 text-sm text-epitech-gray-dark">
                             Pull down to refresh
                         </Text>
                     </View>
@@ -275,38 +278,38 @@ export default function ActivitiesScreen() {
                                 <TouchableOpacity
                                     key={`${event.codeevent}-${index}`}
                                     onPress={() => handleSelectActivity(event)}
-                                    className="mb-3 rounded-xl overflow-hidden shadow-sm"
+                                    className="mb-3 overflow-hidden rounded-xl shadow-sm"
                                     style={{ backgroundColor: bgColor }}
                                 >
                                     <View className="p-4">
-                                        <View className="flex-row justify-between items-start mb-2">
-                                            <View className="flex-1 mr-2">
-                                                <Text className="text-white font-bold text-lg mb-1">
+                                        <View className="mb-2 flex-row items-start justify-between">
+                                            <View className="mr-2 flex-1">
+                                                <Text className="mb-1 text-lg font-bold text-white">
                                                     {event.acti_title}
                                                     {event.nb_group &&
                                                     event.nb_group > 1
                                                         ? ` #${event.num_event}`
                                                         : ""}
                                                 </Text>
-                                                <Text className="text-white/90 text-sm capitalize">
+                                                <Text className="text-sm capitalize text-white/90">
                                                     {event.type_code}
                                                 </Text>
                                             </View>
-                                            <View className="bg-white/20 px-3 py-1 rounded-full">
-                                                <Text className="text-white font-semibold text-xs">
+                                            <View className="rounded-full bg-white/20 px-3 py-1">
+                                                <Text className="text-xs font-semibold text-white">
                                                     {startTime}
                                                 </Text>
                                             </View>
                                         </View>
 
-                                        <View className="flex-row items-center mt-2">
-                                            <View className="bg-white/20 px-3 py-1 rounded-full mr-2">
-                                                <Text className="text-white text-xs">
+                                        <View className="mt-2 flex-row items-center">
+                                            <View className="mr-2 rounded-full bg-white/20 px-3 py-1">
+                                                <Text className="text-xs text-white">
                                                     📍 {room}
                                                 </Text>
                                             </View>
-                                            <View className="bg-white/20 px-3 py-1 rounded-full">
-                                                <Text className="text-white text-xs">
+                                            <View className="rounded-full bg-white/20 px-3 py-1">
+                                                <Text className="text-xs text-white">
                                                     ⏰ {startTime} - {endTime}
                                                 </Text>
                                             </View>
@@ -314,10 +317,10 @@ export default function ActivitiesScreen() {
 
                                         {event.rights &&
                                             event.rights.indexOf(
-                                                "force_register"
+                                                "force_register",
                                             ) > -1 && (
-                                                <View className="mt-2 bg-white/20 px-3 py-1 rounded-full self-start">
-                                                    <Text className="text-white text-xs font-semibold">
+                                                <View className="mt-2 self-start rounded-full bg-white/20 px-3 py-1">
+                                                    <Text className="text-xs font-semibold text-white">
                                                         ⭐ Pedago Rights
                                                     </Text>
                                                 </View>

@@ -93,13 +93,13 @@ export default function QRScanner({ onScan, isActive }: QRScannerProps) {
     if (hasPermission === false) {
         return (
             <View className="flex-1 items-center justify-center bg-epitech-gray px-4">
-                <View className="w-20 h-20 bg-red-100 rounded-full items-center justify-center mb-4">
+                <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-red-100">
                     <Text className="text-4xl">🔒</Text>
                 </View>
-                <Text className="text-red-600 text-lg font-bold mb-2">
+                <Text className="mb-2 text-lg font-bold text-red-600">
                     Camera Access Required
                 </Text>
-                <Text className="text-epitech-gray-dark text-center">
+                <Text className="text-center text-epitech-gray-dark">
                     Please grant camera permissions in your device settings to
                     scan QR codes.
                 </Text>
@@ -137,20 +137,20 @@ export default function QRScanner({ onScan, isActive }: QRScannerProps) {
             >
                 <View className="flex-1 bg-transparent">
                     {/* Scanning overlay */}
-                    <View className="flex-1 justify-center items-center">
+                    <View className="flex-1 items-center justify-center">
                         {/* Corner borders for scan area */}
-                        <View className="w-72 h-72 relative">
+                        <View className="relative h-72 w-72">
                             {/* Top-left corner */}
-                            <View className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-epitech-blue rounded-tl-xl" />
+                            <View className="absolute left-0 top-0 h-12 w-12 rounded-tl-xl border-l-4 border-t-4 border-epitech-blue" />
                             {/* Top-right corner */}
-                            <View className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-epitech-blue rounded-tr-xl" />
+                            <View className="absolute right-0 top-0 h-12 w-12 rounded-tr-xl border-r-4 border-t-4 border-epitech-blue" />
                             {/* Bottom-left corner */}
-                            <View className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-epitech-blue rounded-bl-xl" />
+                            <View className="absolute bottom-0 left-0 h-12 w-12 rounded-bl-xl border-b-4 border-l-4 border-epitech-blue" />
                             {/* Bottom-right corner */}
-                            <View className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-epitech-blue rounded-br-xl" />
+                            <View className="absolute bottom-0 right-0 h-12 w-12 rounded-br-xl border-b-4 border-r-4 border-epitech-blue" />
                         </View>
-                        <View className="mt-6 bg-black/70 px-6 py-3 rounded-full">
-                            <Text className="text-white text-base font-semibold text-center">
+                        <View className="mt-6 rounded-full bg-black/70 px-6 py-3">
+                            <Text className="text-center text-base font-semibold text-white">
                                 {scanned
                                     ? "✓ Scanned! Processing..."
                                     : "Align QR code within frame"}

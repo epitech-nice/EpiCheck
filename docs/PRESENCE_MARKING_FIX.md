@@ -3,6 +3,7 @@
 ## Problem
 
 The app was trying to mark presence on a local `/presence` endpoint that doesn't exist:
+
 ```
 POST https://my.epitech.eu/api/presence
 → 404 Not Found
@@ -17,6 +18,7 @@ Updated the app to use the **Epitech Intranet API** for marking presence on spec
 ### 1. Updated `epitechApi.ts`
 
 **Before:**
+
 ```typescript
 async markPresence(studentEmail: string): Promise<any> {
   const response = await this.api.post("/presence", { studentEmail });
@@ -25,16 +27,17 @@ async markPresence(studentEmail: string): Promise<any> {
 ```
 
 **After:**
+
 ```typescript
 async markPresence(studentEmail: string, event?: IIntraEvent): Promise<any> {
   // Requires event context
   if (!event) {
     throw new Error("Event context required to mark presence");
   }
-  
+
   // Get login from email
   const login = intraApi.getLoginFromEmail(studentEmail);
-  
+
   // Mark on Intranet using the correct endpoint
   await intraApi.markStudentPresent(event, login);
 }
@@ -43,6 +46,7 @@ async markPresence(studentEmail: string, event?: IIntraEvent): Promise<any> {
 ### 2. Updated `PresenceScreen.tsx`
 
 **Added:**
+
 - Event parameter from route: `const event = route.params?.event`
 - Event context check before marking presence
 - Event information in header (activity title, type, date)
@@ -50,15 +54,19 @@ async markPresence(studentEmail: string, event?: IIntraEvent): Promise<any> {
 - Warning when no event is selected
 
 **Before:**
+
 ```typescript
 await epitechApi.markPresence(email);
 // No event context!
 ```
 
 **After:**
+
 ```typescript
 if (!event) {
-  throw new Error("No event selected. Please go back and select an activity first.");
+    throw new Error(
+        "No event selected. Please go back and select an activity first.",
+    );
 }
 await epitechApi.markPresence(email, event);
 // Uses event context for Intranet API
@@ -86,6 +94,7 @@ This is the official Epitech Intranet endpoint for marking student presence.
 ## Event Context
 
 The event parameter contains:
+
 ```typescript
 {
   scolaryear: "2024",
@@ -117,23 +126,27 @@ All these fields are required to build the correct Intranet API URL.
 ### Error Handling
 
 **No event selected:**
+
 ```
-Error: Event context required to mark presence. 
+Error: Event context required to mark presence.
 Please select an activity first.
 ```
 
 **Invalid email format:**
+
 ```
 Error: Invalid email format
 ```
 
 **Network error:**
+
 ```
 Error: Failed to mark presence
 (Shows Intranet API error details)
 ```
 
 **Session expired:**
+
 ```
 Error: Session expired. Please log in again.
 ```
@@ -143,12 +156,14 @@ Error: Session expired. Please log in again.
 ### Header Shows Event Info
 
 **With event:**
+
 ```
 ← Workshop - React Native
   TP • 10/27/2025
 ```
 
 **Without event:**
+
 ```
 ← Presence Scanner
   ⚠️ No event selected

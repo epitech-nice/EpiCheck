@@ -161,7 +161,7 @@ class Office365AuthService {
                 // Exchange code for tokens
                 const tokens = await this.exchangeCodeForTokens(
                     result.params.code,
-                    request.codeVerifier!
+                    request.codeVerifier!,
                 );
 
                 console.log("Tokens received, storing...");
@@ -180,7 +180,7 @@ class Office365AuthService {
             } else if (result.type === "error") {
                 console.error("Auth error:", result.error);
                 throw new Error(
-                    result.error?.message || "Authentication failed"
+                    result.error?.message || "Authentication failed",
                 );
             } else {
                 console.log("Auth cancelled or dismissed");
@@ -189,7 +189,7 @@ class Office365AuthService {
         } catch (error: any) {
             console.error("Office365 login error:", error);
             throw new Error(
-                error.message || "Failed to authenticate with Office 365"
+                error.message || "Failed to authenticate with Office 365",
             );
         }
     }
@@ -199,7 +199,7 @@ class Office365AuthService {
      */
     private async exchangeCodeForTokens(
         code: string,
-        codeVerifier: string
+        codeVerifier: string,
     ): Promise<AuthTokens> {
         try {
             const response = await fetch(getTokenEndpoint(), {
@@ -220,7 +220,7 @@ class Office365AuthService {
             if (!response.ok) {
                 const error = await response.json();
                 throw new Error(
-                    error.error_description || "Token exchange failed"
+                    error.error_description || "Token exchange failed",
                 );
             }
 

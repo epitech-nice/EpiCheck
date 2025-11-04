@@ -25,13 +25,7 @@
  * THE SOFTWARE.
  */
 
-import {
-    View,
-    Text,
-    Alert,
-    ScrollView,
-    TouchableOpacity,
-} from "react-native";
+import { View, Text, Alert, ScrollView, TouchableOpacity } from "react-native";
 
 import { useState, useEffect } from "react";
 import soundService from "../services/soundService";
@@ -103,41 +97,33 @@ export default function SettingsScreen() {
     };
 
     const handleResetSuccessSound = () => {
-        Alert.alert(
-            "Reset Success Sound",
-            "Reset to default sound?",
-            [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Reset",
-                    style: "destructive",
-                    onPress: async () => {
-                        await soundService.resetSuccessSound();
-                        setHasCustomSuccess(false);
-                        Alert.alert("Success", "Sound reset to default");
-                    },
+        Alert.alert("Reset Success Sound", "Reset to default sound?", [
+            { text: "Cancel", style: "cancel" },
+            {
+                text: "Reset",
+                style: "destructive",
+                onPress: async () => {
+                    await soundService.resetSuccessSound();
+                    setHasCustomSuccess(false);
+                    Alert.alert("Success", "Sound reset to default");
                 },
-            ]
-        );
+            },
+        ]);
     };
 
     const handleResetErrorSound = () => {
-        Alert.alert(
-            "Reset Error Sound",
-            "Reset to default sound?",
-            [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Reset",
-                    style: "destructive",
-                    onPress: async () => {
-                        await soundService.resetErrorSound();
-                        setHasCustomError(false);
-                        Alert.alert("Success", "Sound reset to default");
-                    },
+        Alert.alert("Reset Error Sound", "Reset to default sound?", [
+            { text: "Cancel", style: "cancel" },
+            {
+                text: "Reset",
+                style: "destructive",
+                onPress: async () => {
+                    await soundService.resetErrorSound();
+                    setHasCustomError(false);
+                    Alert.alert("Success", "Sound reset to default");
                 },
-            ]
-        );
+            },
+        ]);
     };
 
     const handleTestSuccessSound = async () => {
@@ -157,9 +143,9 @@ export default function SettingsScreen() {
                         onPress={() => navigation.goBack()}
                         className="mr-3"
                     >
-                        <Text className="text-white text-2xl">←</Text>
+                        <Text className="text-2xl text-white">←</Text>
                     </TouchableOpacity>
-                    <Text className="text-white text-xl font-bold">
+                    <Text className="text-xl font-bold text-white">
                         Settings
                     </Text>
                 </View>
@@ -167,32 +153,32 @@ export default function SettingsScreen() {
 
             <ScrollView className="flex-1">
                 {/* Sounds Section */}
-                <View className="bg-white m-4 rounded-lg shadow-sm">
-                    <View className="p-4 border-b border-gray-200">
-                        <Text className="text-epitech-navy text-lg font-bold">
+                <View className="m-4 rounded-lg bg-white shadow-sm">
+                    <View className="border-b border-gray-200 p-4">
+                        <Text className="text-lg font-bold text-epitech-navy">
                             🔊 Sound Settings
                         </Text>
-                        <Text className="text-gray-600 text-xs mt-1">
+                        <Text className="mt-1 text-xs text-gray-600">
                             Customize success and error sounds
                         </Text>
                     </View>
 
                     {/* Success Sound */}
-                    <View className="p-4 border-b border-gray-200">
-                        <View className="flex-row justify-between items-center mb-3">
+                    <View className="border-b border-gray-200 p-4">
+                        <View className="mb-3 flex-row items-center justify-between">
                             <View className="flex-1">
-                                <Text className="text-epitech-navy font-semibold">
+                                <Text className="font-semibold text-epitech-navy">
                                     Success Sound
                                 </Text>
-                                <Text className="text-gray-500 text-xs mt-0.5">
+                                <Text className="mt-0.5 text-xs text-gray-500">
                                     {hasCustomSuccess ? "Custom" : "Default"}
                                 </Text>
                             </View>
                             <TouchableOpacity
                                 onPress={handleTestSuccessSound}
-                                className="bg-epitech-blue px-4 py-2 rounded-lg"
+                                className="rounded-lg bg-epitech-blue px-4 py-2"
                             >
-                                <Text className="text-white font-semibold text-sm">
+                                <Text className="text-sm font-semibold text-white">
                                     🔊 Test
                                 </Text>
                             </TouchableOpacity>
@@ -201,9 +187,9 @@ export default function SettingsScreen() {
                         <View className="flex-row gap-2">
                             <TouchableOpacity
                                 onPress={handleImportSuccessSound}
-                                className="flex-1 bg-green-50 border border-green-200 px-4 py-3 rounded-lg"
+                                className="flex-1 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
                             >
-                                <Text className="text-green-700 font-semibold text-center text-sm">
+                                <Text className="text-center text-sm font-semibold text-green-700">
                                     📁 Import Sound
                                 </Text>
                             </TouchableOpacity>
@@ -211,9 +197,9 @@ export default function SettingsScreen() {
                             {hasCustomSuccess && (
                                 <TouchableOpacity
                                     onPress={handleResetSuccessSound}
-                                    className="flex-1 bg-red-50 border border-red-200 px-4 py-3 rounded-lg"
+                                    className="flex-1 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
                                 >
-                                    <Text className="text-red-700 font-semibold text-center text-sm">
+                                    <Text className="text-center text-sm font-semibold text-red-700">
                                         ↺ Reset
                                     </Text>
                                 </TouchableOpacity>
@@ -223,20 +209,20 @@ export default function SettingsScreen() {
 
                     {/* Error Sound */}
                     <View className="p-4">
-                        <View className="flex-row justify-between items-center mb-3">
+                        <View className="mb-3 flex-row items-center justify-between">
                             <View className="flex-1">
-                                <Text className="text-epitech-navy font-semibold">
+                                <Text className="font-semibold text-epitech-navy">
                                     Error Sound
                                 </Text>
-                                <Text className="text-gray-500 text-xs mt-0.5">
+                                <Text className="mt-0.5 text-xs text-gray-500">
                                     {hasCustomError ? "Custom" : "Default"}
                                 </Text>
                             </View>
                             <TouchableOpacity
                                 onPress={handleTestErrorSound}
-                                className="bg-red-500 px-4 py-2 rounded-lg"
+                                className="rounded-lg bg-red-500 px-4 py-2"
                             >
-                                <Text className="text-white font-semibold text-sm">
+                                <Text className="text-sm font-semibold text-white">
                                     🔊 Test
                                 </Text>
                             </TouchableOpacity>
@@ -245,9 +231,9 @@ export default function SettingsScreen() {
                         <View className="flex-row gap-2">
                             <TouchableOpacity
                                 onPress={handleImportErrorSound}
-                                className="flex-1 bg-green-50 border border-green-200 px-4 py-3 rounded-lg"
+                                className="flex-1 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
                             >
-                                <Text className="text-green-700 font-semibold text-center text-sm">
+                                <Text className="text-center text-sm font-semibold text-green-700">
                                     📁 Import Sound
                                 </Text>
                             </TouchableOpacity>
@@ -255,9 +241,9 @@ export default function SettingsScreen() {
                             {hasCustomError && (
                                 <TouchableOpacity
                                     onPress={handleResetErrorSound}
-                                    className="flex-1 bg-red-50 border border-red-200 px-4 py-3 rounded-lg"
+                                    className="flex-1 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
                                 >
-                                    <Text className="text-red-700 font-semibold text-center text-sm">
+                                    <Text className="text-center text-sm font-semibold text-red-700">
                                         ↺ Reset
                                     </Text>
                                 </TouchableOpacity>
@@ -267,15 +253,14 @@ export default function SettingsScreen() {
                 </View>
 
                 {/* Info Card */}
-                <View className="bg-blue-50 border border-blue-200 m-4 p-4 rounded-lg">
-                    <Text className="text-blue-900 font-semibold mb-2">
+                <View className="m-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <Text className="mb-2 font-semibold text-blue-900">
                         💡 Tips
                     </Text>
-                    <Text className="text-blue-800 text-xs leading-relaxed">
-                        • Supported formats: MP3, WAV, M4A{"\n"}
-                        • Custom sounds are stored locally{"\n"}
-                        • Test sounds before using in production{"\n"}
-                        • Reset to default anytime
+                    <Text className="text-xs leading-relaxed text-blue-800">
+                        • Supported formats: MP3, WAV, M4A{"\n"}• Custom sounds
+                        are stored locally{"\n"}• Test sounds before using in
+                        production{"\n"}• Reset to default anytime
                     </Text>
                 </View>
             </ScrollView>

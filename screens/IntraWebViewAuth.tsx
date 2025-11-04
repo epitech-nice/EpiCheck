@@ -58,7 +58,7 @@ export default function IntraWebViewAuth({
 
     // Build OAuth URL that redirects to Intranet
     const authUrl = `${OAUTH_AUTHORIZE_URL}?response_type=code&client_id=${EPITECH_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-        `${INTRA_URL}/auth/office365`
+        `${INTRA_URL}/auth/office365`,
     )}&state=${encodeURIComponent("/")}`;
 
     const extractCookie = async (url: string) => {
@@ -73,7 +73,7 @@ export default function IntraWebViewAuth({
             if (cookies.user) {
                 console.log(
                     "User cookie found:",
-                    cookies.user.value.substring(0, 20) + "..."
+                    cookies.user.value.substring(0, 20) + "...",
                 );
                 return cookies.user.value;
             }
@@ -93,7 +93,7 @@ export default function IntraWebViewAuth({
         // Check if we've reached the Intranet after OAuth
         if (url.startsWith(INTRA_URL) && !url.includes("/auth/office365")) {
             console.log(
-                "Reached Intranet home, attempting to extract cookie..."
+                "Reached Intranet home, attempting to extract cookie...",
             );
 
             // Give it a moment for cookies to be set
@@ -114,7 +114,7 @@ export default function IntraWebViewAuth({
                         } else {
                             Alert.alert(
                                 "Error",
-                                "Could not extract authentication cookie. Please try again."
+                                "Could not extract authentication cookie. Please try again.",
                             );
                         }
                     }, 1000);
@@ -126,27 +126,27 @@ export default function IntraWebViewAuth({
     return (
         <SafeAreaView className="flex-1 bg-white">
             {/* Header */}
-            <View className="bg-epitech-blue p-4 flex-row items-center justify-between">
+            <View className="flex-row items-center justify-between bg-epitech-blue p-4">
                 <View className="flex-1">
-                    <Text className="text-white font-bold text-lg">
+                    <Text className="text-lg font-bold text-white">
                         Epitech Login
                     </Text>
-                    <Text className="text-white text-xs opacity-80">
+                    <Text className="text-xs text-white opacity-80">
                         Sign in with your Office365 account
                     </Text>
                 </View>
                 <TouchableOpacity
                     onPress={onCancel}
-                    className="bg-white/20 px-4 py-2 rounded-lg"
+                    className="rounded-lg bg-white/20 px-4 py-2"
                 >
-                    <Text className="text-white font-semibold">Cancel</Text>
+                    <Text className="font-semibold text-white">Cancel</Text>
                 </TouchableOpacity>
             </View>
 
             {/* Loading Indicator */}
             {loading && (
-                <View className="absolute top-20 left-0 right-0 items-center z-10">
-                    <View className="bg-white rounded-lg p-4 shadow-lg flex-row items-center">
+                <View className="absolute left-0 right-0 top-20 z-10 items-center">
+                    <View className="flex-row items-center rounded-lg bg-white p-4 shadow-lg">
                         <ActivityIndicator color="#00B8D4" />
                         <Text className="ml-3 text-epitech-navy">
                             Loading...

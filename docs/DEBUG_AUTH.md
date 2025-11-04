@@ -38,12 +38,15 @@ When you run `npm start`, you'll see logs in the terminal. Watch for these speci
 Look for where the log sequence stops. Common issues:
 
 #### Issue 1: Alert Blocking the Flow
+
 **Fixed**: Moved the success alert to appear AFTER calling `onLoginSuccess()`, not before.
 
 #### Issue 2: State Not Updating
+
 **Check**: If you see "Login state updated" but still on login screen, the navigation might not be re-rendering.
 
 #### Issue 3: Token Not Retrieved
+
 **Check**: If "Access token retrieved: NO" appears, tokens weren't stored properly.
 
 ## Testing Steps
@@ -67,6 +70,7 @@ npm start -- --clear
 ### Step 3: Check Metro Bundler
 
 In the Metro bundler terminal, you should see:
+
 - No red errors
 - Log messages appearing in sequence
 - "App render - isLoggedIn: true" after successful login
@@ -77,24 +81,28 @@ In the Metro bundler terminal, you should see:
 
 **Symptoms**: User completes login but gets "cancelled" message
 
-**Solution**: 
+**Solution**:
+
 - Check Azure AD redirect URI matches exactly
 - Ensure `epiccheck://auth` is registered
 - Try adding your current IP: `exp://[your-ip]:8081/auth`
 
 ### Problem 2: Login succeeds but screen doesn't change
 
-**Symptoms**: 
+**Symptoms**:
+
 - All logs show success
 - "Login state updated" appears
 - Still showing login screen
 
 **Possible causes**:
+
 1. React Navigation not re-rendering
 2. State update not triggering re-render
 3. Alert dialog blocking the UI update
 
-**Solution**: 
+**Solution**:
+
 - I've already moved the Alert to appear AFTER navigation
 - Check if you see multiple "App render" logs with isLoggedIn changing
 
@@ -103,6 +111,7 @@ In the Metro bundler terminal, you should see:
 **Symptoms**: Token not found after login
 
 **Solution**:
+
 - Check logs for "Tokens received, storing..."
 - Verify SecureStore is working (on real device/simulator, not all platforms support it)
 - Check for errors in token storage
@@ -112,11 +121,13 @@ In the Metro bundler terminal, you should see:
 **Symptoms**: "redirect_uri_mismatch" error in browser
 
 **Current redirect URI in code**:
+
 ```
 epiccheck://auth
 ```
 
 **What to do**:
+
 1. Run the app
 2. Check console for: "Creating auth request with config"
 3. Copy the exact `redirectUri` value
@@ -128,13 +139,13 @@ If you want to test the navigation without Office 365, temporarily modify LoginS
 
 ```typescript
 const handleOffice365Login = async () => {
-  setIsLoading(true);
-  
-  // TEMPORARY TEST - Remove after debugging
-  setTimeout(() => {
-    onLoginSuccess();
-    setIsLoading(false);
-  }, 1000);
+    setIsLoading(true);
+
+    // TEMPORARY TEST - Remove after debugging
+    setTimeout(() => {
+        onLoginSuccess();
+        setIsLoading(false);
+    }, 1000);
 };
 ```
 
@@ -143,16 +154,19 @@ This will test if navigation works without the OAuth flow.
 ## Verify These Files
 
 ### 1. services/office365Auth.ts
+
 - Client ID is set: `985e002b-598c-41a8-81a0-0c1d482f0bfb`
 - Redirect URI is generated correctly
 - Tokens are being stored
 
 ### 2. App.tsx
+
 - `handleLoginSuccess` is defined
 - State update happens: `setIsLoggedIn(true)`
 - Navigation switches based on `isLoggedIn`
 
 ### 3. screens/LoginScreen.tsx
+
 - `onLoginSuccess()` is called after email validation
 - Loading state is managed properly
 
@@ -169,6 +183,7 @@ The logs will tell us exactly where the process is failing.
 ## Expected Outcome
 
 After successful authentication:
+
 1. Login screen should disappear
 2. Presence screen should appear
 3. "Welcome [Name]!" alert should show (after transition)

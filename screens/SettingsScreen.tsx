@@ -29,6 +29,7 @@ import { View, Text, Alert, ScrollView, TouchableOpacity } from "react-native";
 
 import { useState, useEffect } from "react";
 import soundService from "../services/soundService";
+import { useTheme } from "../contexts/ThemeContext";
 import * as DocumentPicker from "expo-document-picker";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -45,6 +46,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SettingsScreen() {
     const navigation = useNavigation<NavigationProp>();
+    const { theme, isDark, setTheme } = useTheme();
     const [hasCustomSuccess, setHasCustomSuccess] = useState(false);
     const [hasCustomError, setHasCustomError] = useState(false);
 
@@ -135,9 +137,9 @@ export default function SettingsScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-epitech-gray">
+        <SafeAreaView className="flex-1 bg-background">
             {/* Header */}
-            <View className="bg-epitech-blue px-4 py-5">
+            <View className="bg-primary px-4 py-5">
                 <View className="flex-row items-center">
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
@@ -151,32 +153,111 @@ export default function SettingsScreen() {
                 </View>
             </View>
 
-            <ScrollView className="flex-1">
+            <ScrollView className="flex-1 bg-background">
+                {/* Theme Section */}
+                <View className="m-4 rounded-lg border border-card-border bg-card-bg shadow-sm">
+                    <View className="border-b border-border p-4">
+                        <Text className="text-lg font-bold text-text-primary">
+                            🌓 Theme
+                        </Text>
+                        <Text className="mt-1 text-xs text-text-secondary">
+                            Choose your preferred theme
+                        </Text>
+                    </View>
+
+                    <View className="p-4">
+                        <View className="flex-row gap-2">
+                            <TouchableOpacity
+                                onPress={() => setTheme("light")}
+                                className={`flex-1 rounded-lg border-2 px-4 py-3 ${
+                                    theme === "light"
+                                        ? "border-primary bg-status-info-bg"
+                                        : "border-border bg-background-secondary"
+                                }`}
+                            >
+                                <Text
+                                    className={`text-center text-sm font-semibold ${
+                                        theme === "light"
+                                            ? "text-primary"
+                                            : "text-text-secondary"
+                                    }`}
+                                >
+                                    ☀️ Light
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => setTheme("dark")}
+                                className={`flex-1 rounded-lg border-2 px-4 py-3 ${
+                                    theme === "dark"
+                                        ? "border-primary bg-status-info-bg"
+                                        : "border-border bg-background-secondary"
+                                }`}
+                            >
+                                <Text
+                                    className={`text-center text-sm font-semibold ${
+                                        theme === "dark"
+                                            ? "text-primary"
+                                            : "text-text-secondary"
+                                    }`}
+                                >
+                                    🌙 Dark
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => setTheme("system")}
+                                className={`flex-1 rounded-lg border-2 px-4 py-3 ${
+                                    theme === "system"
+                                        ? "border-primary bg-status-info-bg"
+                                        : "border-border bg-background-secondary"
+                                }`}
+                            >
+                                <Text
+                                    className={`text-center text-sm font-semibold ${
+                                        theme === "system"
+                                            ? "text-primary"
+                                            : "text-text-secondary"
+                                    }`}
+                                >
+                                    📱 System
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {theme === "system" && (
+                            <Text className="mt-2 text-center text-xs text-text-tertiary">
+                                Using {isDark ? "dark" : "light"} mode from system settings
+                            </Text>
+                        )}
+                    </View>
+                </View>
+
                 {/* Sounds Section */}
-                <View className="m-4 rounded-lg bg-white shadow-sm">
-                    <View className="border-b border-gray-200 p-4">
-                        <Text className="text-lg font-bold text-epitech-navy">
+                <View className="m-4 rounded-lg border border-card-border bg-card-bg shadow-sm">
+                    <View className="border-b border-border p-4">
+                        <Text className="text-lg font-bold text-text-primary">
                             🔊 Sound Settings
                         </Text>
-                        <Text className="mt-1 text-xs text-gray-600">
+                        <Text className="mt-1 text-xs text-text-secondary">
                             Customize success and error sounds
                         </Text>
                     </View>
 
                     {/* Success Sound */}
-                    <View className="border-b border-gray-200 p-4">
+                    <View className="border-b border-border p-4">
                         <View className="mb-3 flex-row items-center justify-between">
                             <View className="flex-1">
-                                <Text className="font-semibold text-epitech-navy">
+                                <Text className="font-semibold text-text-primary">
                                     Success Sound
                                 </Text>
-                                <Text className="mt-0.5 text-xs text-gray-500">
+                                <Text className="mt-0.5 text-xs text-text-tertiary">
                                     {hasCustomSuccess ? "Custom" : "Default"}
                                 </Text>
                             </View>
                             <TouchableOpacity
                                 onPress={handleTestSuccessSound}
-                                className="rounded-lg bg-epitech-blue px-4 py-2"
+                                className="rounded-lg bg-primary px-4 py-2"
                             >
                                 <Text className="text-sm font-semibold text-white">
                                     🔊 Test
@@ -187,9 +268,9 @@ export default function SettingsScreen() {
                         <View className="flex-row gap-2">
                             <TouchableOpacity
                                 onPress={handleImportSuccessSound}
-                                className="flex-1 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
+                                className="flex-1 rounded-lg border border-status-success bg-status-success-bg px-4 py-3"
                             >
-                                <Text className="text-center text-sm font-semibold text-green-700">
+                                <Text className="text-center text-sm font-semibold text-status-success">
                                     📁 Import Sound
                                 </Text>
                             </TouchableOpacity>
@@ -197,9 +278,9 @@ export default function SettingsScreen() {
                             {hasCustomSuccess && (
                                 <TouchableOpacity
                                     onPress={handleResetSuccessSound}
-                                    className="flex-1 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
+                                    className="flex-1 rounded-lg border border-status-error bg-status-error-bg px-4 py-3"
                                 >
-                                    <Text className="text-center text-sm font-semibold text-red-700">
+                                    <Text className="text-center text-sm font-semibold text-status-error">
                                         ↺ Reset
                                     </Text>
                                 </TouchableOpacity>
@@ -211,16 +292,16 @@ export default function SettingsScreen() {
                     <View className="p-4">
                         <View className="mb-3 flex-row items-center justify-between">
                             <View className="flex-1">
-                                <Text className="font-semibold text-epitech-navy">
+                                <Text className="font-semibold text-text-primary">
                                     Error Sound
                                 </Text>
-                                <Text className="mt-0.5 text-xs text-gray-500">
+                                <Text className="mt-0.5 text-xs text-text-tertiary">
                                     {hasCustomError ? "Custom" : "Default"}
                                 </Text>
                             </View>
                             <TouchableOpacity
                                 onPress={handleTestErrorSound}
-                                className="rounded-lg bg-red-500 px-4 py-2"
+                                className="rounded-lg bg-status-error px-4 py-2"
                             >
                                 <Text className="text-sm font-semibold text-white">
                                     🔊 Test
@@ -231,9 +312,9 @@ export default function SettingsScreen() {
                         <View className="flex-row gap-2">
                             <TouchableOpacity
                                 onPress={handleImportErrorSound}
-                                className="flex-1 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
+                                className="flex-1 rounded-lg border border-status-success bg-status-success-bg px-4 py-3"
                             >
-                                <Text className="text-center text-sm font-semibold text-green-700">
+                                <Text className="text-center text-sm font-semibold text-status-success">
                                     📁 Import Sound
                                 </Text>
                             </TouchableOpacity>
@@ -241,9 +322,9 @@ export default function SettingsScreen() {
                             {hasCustomError && (
                                 <TouchableOpacity
                                     onPress={handleResetErrorSound}
-                                    className="flex-1 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
+                                    className="flex-1 rounded-lg border border-status-error bg-status-error-bg px-4 py-3"
                                 >
-                                    <Text className="text-center text-sm font-semibold text-red-700">
+                                    <Text className="text-center text-sm font-semibold text-status-error">
                                         ↺ Reset
                                     </Text>
                                 </TouchableOpacity>
@@ -253,11 +334,11 @@ export default function SettingsScreen() {
                 </View>
 
                 {/* Info Card */}
-                <View className="m-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-                    <Text className="mb-2 font-semibold text-blue-900">
+                <View className="m-4 rounded-lg border border-status-info bg-status-info-bg p-4">
+                    <Text className="mb-2 font-semibold text-status-info">
                         💡 Tips
                     </Text>
-                    <Text className="text-xs leading-relaxed text-blue-800">
+                    <Text className="text-xs leading-relaxed text-status-info">
                         • Supported formats: MP3, WAV, M4A{"\n"}• Custom sounds
                         are stored locally{"\n"}• Test sounds before using in
                         production{"\n"}• Reset to default anytime

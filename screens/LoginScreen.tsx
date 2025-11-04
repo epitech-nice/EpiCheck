@@ -108,7 +108,7 @@ export default function LoginScreen() {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            className="flex-1 bg-white"
+            className="flex-1"
         >
             {/* WebView Authentication Modal */}
             <Modal
@@ -136,7 +136,7 @@ export default function LoginScreen() {
                     </Text>
                 </View>
 
-                <View className="rounded-2xl border border-gray-200 bg-white p-8">
+                <View className="rounded-2xl border border-gray-200 p-8">
                     {/* Info Section */}
                     <View className="mb-6">
                         <Text className="mb-2 text-center text-lg font-bold text-epitech-navy">
@@ -175,20 +175,20 @@ export default function LoginScreen() {
                     </TouchableOpacity>
 
                     {/* Security Note */}
-                    <View className="mt-6 rounded-lg bg-blue-50 p-3">
-                        <Text className="text-center text-xs font-medium text-epitech-navy">
+                    <View className="mt-6 rounded-lg bg-status-info-bg p-3">
+                        <Text className="text-center text-xs font-medium text-status-info">
                             🔒 Secure authentication via Epitech Intranet
                         </Text>
                     </View>
 
                     {/* Footer */}
-                    <Text className="mt-4 text-center text-xs text-gray-500">
+                    <Text className="mt-4 text-center text-xs text-text-tertiary">
                         Uses your Epitech Office365 credentials
                     </Text>
                 </View>
 
                 {/* Bottom Info */}
-                <Text className="mt-8 text-center text-xs text-gray-400">
+                <Text className="mt-8 text-center text-xs text-text-disabled">
                     Powered by Epitech Intranet • Secure Authentication
                 </Text>
             </View>

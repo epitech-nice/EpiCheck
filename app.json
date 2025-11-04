@@ -1,64 +1,70 @@
 {
-    "expo": {
-        "name": "EpiCheck",
-        "slug": "EpiCheck",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/icon.png",
-        "userInterfaceStyle": "light",
-        "splash": {
-            "image": "./assets/splash-icon.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.epicheck.app",
-            "infoPlist": {
-                "NFCReaderUsageDescription": "This app requires NFC to scan student cards for presence checking.",
-                "NSCameraUsageDescription": "This app requires camera access to scan QR codes for presence checking."
-            },
-            "entitlements": {
-                "com.apple.developer.nfc.readersession.formats": ["NDEF", "TAG"]
-            }
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            },
-            "package": "com.epicheck.app",
-            "versionCode": 1,
-            "permissions": [
-                "android.permission.CAMERA",
-                "android.permission.NFC",
-                "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
-            ],
-            "intentFilters": [
-                {
-                    "action": "android.nfc.action.NDEF_DISCOVERED",
-                    "category": ["android.intent.category.DEFAULT"]
-                }
-            ]
-        },
-        "web": {
-            "favicon": "./assets/favicon.png",
-            "bundler": "metro"
-        },
-        "plugins": [
-            [
-                "expo-camera",
-                {
-                    "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes."
-                }
-            ]
-        ],
-        "scheme": "epicheck",
-        "extra": {
-            "eas": {
-                "projectId": "your-project-id"
-            }
+  "expo": {
+    "name": "EpiCheck",
+    "slug": "EpiCheck",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.epicheck.app",
+      "infoPlist": {
+        "NFCReaderUsageDescription": "This app requires NFC to scan student cards for presence checking.",
+        "NSCameraUsageDescription": "This app requires camera access to scan QR codes for presence checking."
+      },
+      "entitlements": {
+        "com.apple.developer.nfc.readersession.formats": [
+          "NDEF",
+          "TAG"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.epicheck.app",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.NFC",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ],
+      "intentFilters": [
+        {
+          "action": "android.nfc.action.NDEF_DISCOVERED",
+          "category": [
+            "android.intent.category.DEFAULT"
+          ]
         }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes."
+        }
+      ],
+      "expo-audio"
+    ],
+    "scheme": "epicheck",
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
     }
+  }
 }

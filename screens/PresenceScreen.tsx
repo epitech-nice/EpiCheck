@@ -180,9 +180,9 @@ export default function PresenceScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-epitech-gray">
+        <SafeAreaView className="flex-1 bg-background">
             {/* Header */}
-            <View className="bg-epitech-blue px-4 py-5">
+            <View className="bg-primary px-4 py-5">
                 <View className="mb-4 flex-row items-center justify-between">
                     <View className="flex-1 flex-row items-center">
                         <TouchableOpacity
@@ -202,7 +202,7 @@ export default function PresenceScreen() {
                                 </Text>
                             )}
                             {!event && (
-                                <Text className="text-xs text-yellow-300">
+                                <Text className="text-xs text-status-warning">
                                     ⚠️ No event selected
                                 </Text>
                             )}
@@ -229,7 +229,7 @@ export default function PresenceScreen() {
                         <Text
                             className={`text-center text-sm font-bold ${
                                 scanMode === "qr"
-                                    ? "text-epitech-blue"
+                                    ? "text-primary"
                                     : "text-white"
                             }`}
                         >
@@ -247,7 +247,7 @@ export default function PresenceScreen() {
                         <Text
                             className={`text-center text-sm font-bold ${
                                 scanMode === "nfc"
-                                    ? "text-epitech-blue"
+                                    ? "text-primary"
                                     : "text-white/60"
                             }`}
                         >
@@ -280,15 +280,15 @@ export default function PresenceScreen() {
 
             {/* Scanned Students List */}
             <View
-                className="border-t-2 border-epitech-blue bg-white"
+                className="border-t-2 border-primary bg-surface"
                 style={{ maxHeight: 250 }}
             >
-                <View className="flex-row items-center justify-between border-b border-gray-300 bg-epitech-gray px-4 py-3">
+                <View className="flex-row items-center justify-between border-b border-border bg-background-secondary px-4 py-3">
                     <View>
-                        <Text className="text-base font-bold text-epitech-navy">
+                        <Text className="text-base font-bold text-text-primary">
                             Recent Scans
                         </Text>
-                        <Text className="text-xs text-epitech-gray-dark">
+                        <Text className="text-xs text-text-secondary">
                             {scannedStudents.length} student
                             {scannedStudents.length !== 1 ? "s" : ""} checked
                         </Text>
@@ -296,9 +296,9 @@ export default function PresenceScreen() {
                     {scannedStudents.length > 0 && (
                         <TouchableOpacity
                             onPress={clearHistory}
-                            className="rounded-md bg-red-50 px-3 py-1.5"
+                            className="rounded-md bg-status-error-bg px-3 py-1.5"
                         >
-                            <Text className="text-sm font-semibold text-red-600">
+                            <Text className="text-sm font-semibold text-status-error">
                                 Clear All
                             </Text>
                         </TouchableOpacity>
@@ -308,10 +308,10 @@ export default function PresenceScreen() {
                 <ScrollView className="px-4 py-2">
                     {scannedStudents.length === 0 ? (
                         <View className="items-center py-8">
-                            <Text className="text-center text-sm text-gray-400">
+                            <Text className="text-center text-sm text-text-tertiary">
                                 No scans yet
                             </Text>
-                            <Text className="mt-1 text-center text-xs text-gray-400">
+                            <Text className="mt-1 text-center text-xs text-text-tertiary">
                                 Start scanning student cards to mark presence
                             </Text>
                         </View>
@@ -321,8 +321,8 @@ export default function PresenceScreen() {
                                 key={index}
                                 className={`mb-2 rounded-lg border p-3.5 ${
                                     student.status === "success"
-                                        ? "border-green-200 bg-green-50"
-                                        : "border-red-200 bg-red-50"
+                                        ? "border-status-success bg-status-success-bg"
+                                        : "border-status-error bg-status-error-bg"
                                 }`}
                             >
                                 <View className="flex-row items-center justify-between">
@@ -331,28 +331,28 @@ export default function PresenceScreen() {
                                             <View
                                                 className={`mr-2 h-2 w-2 rounded-full ${
                                                     student.status === "success"
-                                                        ? "bg-green-500"
-                                                        : "bg-red-500"
+                                                        ? "bg-status-success"
+                                                        : "bg-status-error"
                                                 }`}
                                             />
                                             <Text
                                                 className={`text-sm font-semibold ${
                                                     student.status === "success"
-                                                        ? "text-green-800"
-                                                        : "text-red-800"
+                                                        ? "text-status-success"
+                                                        : "text-status-error"
                                                 }`}
                                                 numberOfLines={1}
                                             >
                                                 {student.email}
                                             </Text>
                                         </View>
-                                        <Text className="ml-4 mt-0.5 text-xs text-gray-500">
+                                        <Text className="ml-4 mt-0.5 text-xs text-text-tertiary">
                                             {student.status === "success"
                                                 ? "Presence marked"
                                                 : "Failed to mark"}
                                         </Text>
                                     </View>
-                                    <Text className="text-xs font-medium text-gray-600">
+                                    <Text className="text-xs font-medium text-text-secondary">
                                         {student.timestamp}
                                     </Text>
                                 </View>

@@ -39,6 +39,7 @@ import {
 
 import intraApi from "../services/intraApi";
 import { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
 import epitechApi from "../services/epitechApi";
 import { IIntraEvent } from "../types/IIntraEvent";
 import { useNavigation } from "@react-navigation/native";
@@ -177,10 +178,10 @@ export default function ActivitiesScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 bg-epitech-gray">
+            <SafeAreaView className="flex-1 bg-background">
                 <View className="flex-1 items-center justify-center">
-                    <ActivityIndicator size="large" color="#00B8D4" />
-                    <Text className="mt-4 font-semibold text-epitech-navy">
+                    <ActivityIndicator size="large" color="rgb(var(--color-primary))" />
+                    <Text className="mt-4 font-semibold text-text-primary">
                         Loading activities...
                     </Text>
                 </View>
@@ -189,19 +190,19 @@ export default function ActivitiesScreen() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-epitech-gray">
+        <SafeAreaView className="flex-1 bg-background">
             {/* Header */}
-            <View className="bg-epitech-blue px-4 py-5">
+            <View className="bg-primary px-4 py-5">
                 <View className="mb-2 flex-row items-center justify-between">
                     <View className="flex-1 flex-row items-center">
-                        <View className="mr-3 h-10 w-10 items-center justify-center rounded-lg bg-white">
-                            <Text className="text-xl font-bold text-epitech-blue">
+                        <View className="mr-3 h-10 w-10 items-center justify-center rounded-lg">
+                            <Text className="text-xl font-bold text-white">
                                 E
                             </Text>
                         </View>
                         <View className="flex-1">
                             <Text className="text-2xl font-bold text-white">
-                                Today's Activities
+                                Today&apos;s Activities
                             </Text>
                             <Text className="text-xs text-white/80">
                                 {new Date().toLocaleDateString("en-US", {
@@ -218,17 +219,13 @@ export default function ActivitiesScreen() {
                             onPress={() => navigation.navigate("Settings")}
                             className="rounded-lg border border-white/30 bg-white/20 px-3 py-2"
                         >
-                            <Text className="text-xs font-semibold text-white">
-                                ⚙️ Settings
-                            </Text>
+                            <Ionicons name="cog" size={24} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleLogout}
                             className="rounded-lg border border-white/30 bg-white/20 px-3 py-2"
                         >
-                            <Text className="text-xs font-semibold text-white">
-                                Logout
-                            </Text>
+                            <Ionicons name="log-out" size={24} color="red" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -246,7 +243,7 @@ export default function ActivitiesScreen() {
 
             {/* Activities List */}
             <ScrollView
-                className="flex-1"
+                className="flex-1 bg-background"
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -257,10 +254,10 @@ export default function ActivitiesScreen() {
                 {activities.length === 0 ? (
                     <View className="flex-1 items-center justify-center py-20">
                         <Text className="mb-4 text-6xl">📅</Text>
-                        <Text className="text-lg font-bold text-epitech-navy">
+                        <Text className="text-lg font-bold text-text-primary">
                             No activities today
                         </Text>
-                        <Text className="mt-2 text-sm text-epitech-gray-dark">
+                        <Text className="mt-2 text-sm text-text-secondary">
                             Pull down to refresh
                         </Text>
                     </View>

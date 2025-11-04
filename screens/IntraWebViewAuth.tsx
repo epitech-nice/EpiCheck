@@ -124,7 +124,7 @@ export default function IntraWebViewAuth({
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className="flex-1">
             {/* Header */}
             <View className="flex-row items-center justify-between bg-epitech-blue p-4">
                 <View className="flex-1">
@@ -146,7 +146,7 @@ export default function IntraWebViewAuth({
             {/* Loading Indicator */}
             {loading && (
                 <View className="absolute left-0 right-0 top-20 z-10 items-center">
-                    <View className="flex-row items-center rounded-lg bg-white p-4 shadow-lg">
+                    <View className="flex-row items-center rounded-lg p-4 shadow-lg">
                         <ActivityIndicator color="#00B8D4" />
                         <Text className="ml-3 text-epitech-navy">
                             Loading...
@@ -157,7 +157,7 @@ export default function IntraWebViewAuth({
 
             {/* Current URL Display (Dev only) */}
             {__DEV__ && currentUrl && (
-                <View className="bg-gray-100 p-2">
+                <View className=" p-2">
                     <Text className="text-xs text-gray-600" numberOfLines={1}>
                         {currentUrl}
                     </Text>

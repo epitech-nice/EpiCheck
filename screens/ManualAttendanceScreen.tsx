@@ -105,7 +105,7 @@ export default function ManualAttendanceScreen() {
         setIsLoading(true);
         try {
             const registeredStudents = await intraApi.getRegisteredStudents(event);
-            
+
             // Map students with their current presence status
             const studentsWithPresence = registeredStudents.map((s) => ({
                 ...s,
@@ -200,14 +200,14 @@ export default function ManualAttendanceScreen() {
 
     if (!event) {
         return (
-            <SafeAreaView className="flex-1 bg-epitech-gray">
+            <SafeAreaView className="flex-1 bg-background">
                 <View className="flex-1 items-center justify-center p-4">
-                    <Text className="text-center text-lg text-red-600">
+                    <Text className="text-center text-lg text-status-error">
                         No event selected. Please go back and select an activity.
                     </Text>
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
-                        className="mt-4 rounded-lg bg-epitech-blue px-6 py-3"
+                        className="mt-4 rounded-lg bg-primary px-6 py-3"
                     >
                         <Text className="font-semibold text-white">Go Back</Text>
                     </TouchableOpacity>
@@ -217,9 +217,9 @@ export default function ManualAttendanceScreen() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-epitech-gray">
+        <SafeAreaView className="flex-1 bg-background">
             {/* Header */}
-            <View className="bg-epitech-blue px-4 py-5">
+            <View className="bg-primary px-4 py-5">
                 <View className="mb-4 flex-row items-center justify-between">
                     <View className="flex-1 flex-row items-center">
                         <TouchableOpacity
@@ -275,7 +275,7 @@ export default function ManualAttendanceScreen() {
                         <Text
                             className={`text-center text-sm font-bold ${
                                 selectedTab === "list"
-                                    ? "text-epitech-blue"
+                                    ? "text-primary"
                                     : "text-white"
                             }`}
                         >
@@ -292,7 +292,7 @@ export default function ManualAttendanceScreen() {
                         <Text
                             className={`text-center text-sm font-bold ${
                                 selectedTab === "manual"
-                                    ? "text-epitech-blue"
+                                    ? "text-primary"
                                     : "text-white"
                             }`}
                         >
@@ -307,17 +307,17 @@ export default function ManualAttendanceScreen() {
                 {selectedTab === "list" ? (
                     <View className="flex-1">
                         {/* Search Bar */}
-                        <View className="border-b border-gray-300 bg-white px-4 py-3">
+                        <View className="border-b border-border bg-surface px-4 py-3">
                             <TextInput
                                 value={searchQuery}
                                 onChangeText={setSearchQuery}
                                 placeholder="Search by name, email, or login..."
-                                className="rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-base"
+                                className="rounded-lg border border-input-border bg-input-bg px-4 py-3 text-base text-input-text"
                                 autoCapitalize="none"
                                 autoCorrect={false}
                             />
                             {searchQuery.length > 0 && (
-                                <Text className="mt-1 text-xs text-gray-600">
+                                <Text className="mt-1 text-xs text-text-secondary">
                                     Found {filteredStudents.length} of {total} students
                                 </Text>
                             )}
@@ -326,16 +326,16 @@ export default function ManualAttendanceScreen() {
                         {/* Student List */}
                         {isLoading ? (
                             <View className="flex-1 items-center justify-center">
-                                <ActivityIndicator size="large" color="#1d4ed8" />
-                                <Text className="mt-4 text-gray-600">
+                                <ActivityIndicator size="large" color="rgb(var(--color-primary))" />
+                                <Text className="mt-4 text-text-secondary">
                                     Loading students...
                                 </Text>
                             </View>
                         ) : (
-                            <ScrollView className="flex-1 bg-gray-50">
+                            <ScrollView className="flex-1 bg-background-secondary">
                                 {filteredStudents.length === 0 ? (
                                     <View className="items-center py-8">
-                                        <Text className="text-center text-gray-600">
+                                        <Text className="text-center text-text-secondary">
                                             {searchQuery
                                                 ? "No students found"
                                                 : "No students registered"}
@@ -345,13 +345,13 @@ export default function ManualAttendanceScreen() {
                                     filteredStudents.map((student, index) => (
                                         <View
                                             key={student.login || index}
-                                            className="mb-2 border-b border-gray-200 bg-white px-4 py-3"
+                                            className="mb-2 border-b border-border bg-surface px-4 py-3"
                                         >
                                             <View className="mb-2">
-                                                <Text className="text-base font-semibold text-gray-900">
+                                                <Text className="text-base font-semibold text-text-primary">
                                                     {student.title || student.login}
                                                 </Text>
-                                                <Text className="text-sm text-gray-600">
+                                                <Text className="text-sm text-text-secondary">
                                                     {student.email || student.login}
                                                 </Text>
                                             </View>
@@ -370,8 +370,8 @@ export default function ManualAttendanceScreen() {
                                                     }
                                                     className={`flex-1 rounded-lg py-2.5 ${
                                                         student.presenceStatus === "present"
-                                                            ? "bg-green-600"
-                                                            : "bg-green-500"
+                                                            ? "bg-status-success opacity-90"
+                                                            : "bg-status-success"
                                                     } ${
                                                         isProcessing
                                                             ? "opacity-50"
@@ -398,8 +398,8 @@ export default function ManualAttendanceScreen() {
                                                     }
                                                     className={`flex-1 rounded-lg py-2.5 ${
                                                         student.presenceStatus === "absent"
-                                                            ? "bg-red-600"
-                                                            : "bg-red-500"
+                                                            ? "bg-status-error opacity-90"
+                                                            : "bg-status-error"
                                                     } ${
                                                         isProcessing
                                                             ? "opacity-50"
@@ -420,11 +420,11 @@ export default function ManualAttendanceScreen() {
                         )}
                     </View>
                 ) : (
-                    <View className="flex-1 bg-white p-4">
-                        <Text className="mb-2 text-base font-semibold text-gray-900">
+                    <View className="flex-1 bg-surface p-4">
+                        <Text className="mb-2 text-base font-semibold text-text-primary">
                             Enter Student Email or Login
                         </Text>
-                        <Text className="mb-4 text-sm text-gray-600">
+                        <Text className="mb-4 text-sm text-text-secondary">
                             Type the student&apos;s email (e.g., firstname.lastname@epitech.eu)
                             or login to mark them present.
                         </Text>
@@ -433,7 +433,7 @@ export default function ManualAttendanceScreen() {
                             value={manualEmail}
                             onChangeText={setManualEmail}
                             placeholder="student.email@epitech.eu"
-                            className="mb-4 rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-base"
+                            className="mb-4 rounded-lg border border-input-border bg-input-bg px-4 py-3 text-base text-input-text"
                             autoCapitalize="none"
                             autoCorrect={false}
                             keyboardType="email-address"
@@ -445,8 +445,8 @@ export default function ManualAttendanceScreen() {
                             disabled={isProcessing || !manualEmail.trim()}
                             className={`rounded-lg py-4 ${
                                 isProcessing || !manualEmail.trim()
-                                    ? "bg-gray-400"
-                                    : "bg-epitech-blue"
+                                    ? "bg-text-disabled"
+                                    : "bg-primary"
                             }`}
                         >
                             <Text className="text-center text-base font-semibold text-white">
@@ -454,11 +454,11 @@ export default function ManualAttendanceScreen() {
                             </Text>
                         </TouchableOpacity>
 
-                        <View className="mt-6 rounded-lg bg-blue-50 p-4">
-                            <Text className="mb-2 text-sm font-semibold text-blue-900">
+                        <View className="mt-6 rounded-lg border border-status-info bg-status-info-bg p-4">
+                            <Text className="mb-2 text-sm font-semibold text-status-info">
                                 💡 Tips:
                             </Text>
-                            <Text className="text-sm text-blue-800">
+                            <Text className="text-sm text-status-info">
                                 • You can enter email or login{"\n"}
                                 • The system will automatically find the student{"\n"}
                                 • Students must be registered for this event

@@ -224,7 +224,7 @@ export default function NFCScanner({ onScan, isActive }: NFCScannerProps) {
 
     return (
         <View className="flex-1 items-center justify-center bg-epitech-navy px-6">
-            <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8">
+            <View className="w-full max-w-sm items-center rounded-3xl p-8">
                 {/* NFC Icon */}
                 <View className="mb-6 h-32 w-32 items-center justify-center rounded-full bg-epitech-blue">
                     <Text className="text-7xl text-white">📱</Text>

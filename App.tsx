@@ -31,9 +31,10 @@ import LoginScreen from "./screens/LoginScreen";
 import PresenceScreen from "./screens/PresenceScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import ActivitiesScreen from "./screens/ActivitiesScreen";
-import ManualAttendanceScreen from "./screens/ManualAttendanceScreen";
 import type { IIntraEvent } from "./types/IIntraEvent";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { NavigationContainer } from "@react-navigation/native";
+import ManualAttendanceScreen from "./screens/ManualAttendanceScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -47,30 +48,41 @@ type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function AppNavigator() {
+    const { isDark } = useTheme();
+
+    return (
+        <NavigationContainer>
+            <Stack.Navigator
+                initialRouteName="Login"
+                screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: "transparent" },
+                }}
+            >
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen
+                    name="Activities"
+                    component={ActivitiesScreen}
+                />
+                <Stack.Screen name="Presence" component={PresenceScreen} />
+                <Stack.Screen
+                    name="ManualAttendance"
+                    component={ManualAttendanceScreen}
+                />
+                <Stack.Screen name="Settings" component={SettingsScreen} />
+            </Stack.Navigator>
+            <StatusBar style={isDark ? "light" : "dark"} />
+        </NavigationContainer>
+    );
+}
+
 export default function App() {
     return (
         <SafeAreaProvider>
-            <NavigationContainer>
-                <Stack.Navigator
-                    initialRouteName="Login"
-                    screenOptions={{
-                        headerShown: false,
-                    }}
-                >
-                    <Stack.Screen name="Login" component={LoginScreen} />
-                    <Stack.Screen
-                        name="Activities"
-                        component={ActivitiesScreen}
-                    />
-                    <Stack.Screen name="Presence" component={PresenceScreen} />
-                    <Stack.Screen
-                        name="ManualAttendance"
-                        component={ManualAttendanceScreen}
-                    />
-                    <Stack.Screen name="Settings" component={SettingsScreen} />
-                </Stack.Navigator>
-                <StatusBar style="auto" />
-            </NavigationContainer>
+            <ThemeProvider>
+                <AppNavigator />
+            </ThemeProvider>
         </SafeAreaProvider>
     );
 }

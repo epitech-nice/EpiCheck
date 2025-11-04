@@ -27,7 +27,6 @@
  * THE SOFTWARE.
  */
 
-import { Audio } from "expo-av";
 // eslint-disable-next-line import/no-unresolved
 // @ts-ignore - expo-file-system/legacy is the correct import path for deprecated API compatibility
 import * as FileSystem from "expo-file-system/legacy";
@@ -42,19 +41,13 @@ const CUSTOM_SUCCESS_PATH = `${CUSTOM_SOUNDS_DIR}success.mp3`;
 const CUSTOM_ERROR_PATH = `${CUSTOM_SOUNDS_DIR}error.mp3`;
 
 class SoundService {
-    private sound: Audio.Sound | null = null;
+    private successPlayer: any | null = null;
+    private errorPlayer: any | null = null;
     private customSuccessSound: string | null = null;
     private customErrorSound: string | null = null;
 
     async initialize() {
         try {
-            // Set audio mode for better playback
-            await Audio.setAudioModeAsync({
-                playsInSilentModeIOS: true,
-                staysActiveInBackground: false,
-                shouldDuckAndroid: true,
-            });
-
             // Ensure sounds directory exists
             const dirInfo = await FileSystem.getInfoAsync(CUSTOM_SOUNDS_DIR);
             if (!dirInfo.exists) {
@@ -179,42 +172,56 @@ class SoundService {
      * Play success sound (custom or default)
      */
     async playSuccessSound() {
-        await this.playSound(this.customSuccessSound, DEFAULT_SUCCESS_SOUND);
+        await this.playSound(
+            this.customSuccessSound,
+            DEFAULT_SUCCESS_SOUND,
+            "success",
+        );
     }
 
     /**
      * Play error sound (custom or default)
      */
     async playErrorSound() {
-        await this.playSound(this.customErrorSound, DEFAULT_ERROR_SOUND);
+        await this.playSound(
+            this.customErrorSound,
+            DEFAULT_ERROR_SOUND,
+            "error",
+        );
     }
 
     /**
      * Internal method to play a sound with fallback
      */
-    private async playSound(customPath: string | null, defaultSound: any) {
+    private async playSound(
+        customPath: string | null,
+        defaultSound: any,
+        type: "success" | "error",
+    ) {
         try {
-            // Unload previous sound if exists
-            if (this.sound) {
-                await this.sound.unloadAsync();
-            }
+            // Import at runtime to avoid hook issues
+            const { createAudioPlayer } = await import("expo-audio");
 
             // Determine which sound to play
             const soundSource = customPath ? { uri: customPath } : defaultSound;
 
-            // Load and play the sound
-            const { sound } = await Audio.Sound.createAsync(soundSource, {
-                shouldPlay: true,
-            });
+            // Create and play the audio player
+            const player = createAudioPlayer(soundSource);
 
-            this.sound = sound;
+            // Store player reference
+            if (type === "success") {
+                this.successPlayer = player;
+            } else {
+                this.errorPlayer = player;
+            }
 
-            // Unload when finished to free memory
-            sound.setOnPlaybackStatusUpdate((status) => {
-                if (status.isLoaded && status.didJustFinish) {
-                    sound.unloadAsync();
-                }
-            });
+            // Play the sound
+            player.play();
+
+            // Auto-cleanup after playing (approximate 2 seconds)
+            setTimeout(() => {
+                player.remove();
+            }, 2000);
         } catch (error) {
             console.error("Failed to play sound:", error);
         }
@@ -222,9 +229,13 @@ class SoundService {
 
     async cleanup() {
         try {
-            if (this.sound) {
-                await this.sound.unloadAsync();
-                this.sound = null;
+            if (this.successPlayer) {
+                this.successPlayer.remove();
+                this.successPlayer = null;
+            }
+            if (this.errorPlayer) {
+                this.errorPlayer.remove();
+                this.errorPlayer = null;
             }
         } catch (error) {
             console.error("Failed to cleanup sound:", error);

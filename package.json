@@ -12,7 +12,7 @@
         "build:android:release": "cd android && ./gradlew assembleRelease && cd ..",
         "build:apk": "cd android && ./gradlew assembleRelease && cd ..",
         "lint": "expo lint",
-        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md,yaml}\""
     },
     "dependencies": {
         "@expo/vector-icons": "^15.0.3",

@@ -34,6 +34,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     Modal,
+    Image,
 } from "react-native";
 
 // import epitechApi from "../services/epitechApi";
@@ -122,74 +123,56 @@ export default function LoginScreen() {
                 />
             </Modal>
 
-            <View className="flex-1 justify-center px-8">
+            <View className="flex-1 justify-center bg-background px-8">
                 {/* Logo Section */}
                 <View className="mb-12 items-center">
-                    <View className="mb-4 h-20 w-20 items-center justify-center rounded-2xl bg-epitech-blue">
-                        <Text className="text-4xl font-bold text-white">E</Text>
+                    <View className="mb-4 h-20 w-20 items-center justify-center rounded-2xl">
+                        <Image
+                            source={require("../assets/img/epicheck-icon.png")}
+                            className="absolute h-20 w-20"
+                            resizeMode="contain"
+                        />
                     </View>
-                    <Text className="mb-1 text-3xl font-bold text-epitech-navy">
+                    <Text className="mb-1 text-3xl font-bold text-text-primary">
                         EpiCheck
                     </Text>
-                    <Text className="text-center text-sm text-epitech-gray-dark">
-                        Student Presence Management System
+                    <Text className="text-center text-sm text-text-secondary">
+                        Student Presence Management Application
                     </Text>
                 </View>
 
-                <View className="rounded-2xl border border-gray-200 p-8">
+                <View className="rounded-2xl border border-card-border bg-card-bg p-8">
                     {/* Info Section */}
-                    <View className="mb-6">
-                        <Text className="mb-2 text-center text-lg font-bold text-epitech-navy">
-                            Sign in with Intranet
-                        </Text>
-                        <Text className="text-center text-sm text-epitech-gray-dark">
-                            Use your Epitech account to continue
-                        </Text>
-                    </View>
-
-                    {/* Epitech Logo Icon */}
-                    <View className="mb-6 items-center">
-                        <View className="h-16 w-16 items-center justify-center rounded-2xl border-2 border-epitech-blue bg-epitech-blue">
-                            <Text className="text-4xl">�</Text>
-                        </View>
-                    </View>
 
                     {/* Intranet Login Button */}
                     <TouchableOpacity
                         onPress={handleIntranetLogin}
                         disabled={isLoading}
                         className={`flex-row items-center justify-center rounded-lg py-4 ${
-                            isLoading ? "bg-gray-400" : "bg-epitech-blue"
+                            isLoading ? "bg-text-disabled" : "bg-primary"
                         }`}
                     >
                         {isLoading ? (
                             <ActivityIndicator color="white" />
                         ) : (
                             <>
-                                <Text className="mr-3 text-2xl">🔐</Text>
                                 <Text className="text-base font-bold uppercase tracking-wide text-white">
-                                    Sign in with Epitech
+                                    Sign in with Epitech Intranet
                                 </Text>
                             </>
                         )}
                     </TouchableOpacity>
 
-                    {/* Security Note */}
-                    <View className="mt-6 rounded-lg bg-status-info-bg p-3">
-                        <Text className="text-center text-xs font-medium text-status-info">
-                            🔒 Secure authentication via Epitech Intranet
-                        </Text>
-                    </View>
-
                     {/* Footer */}
                     <Text className="mt-4 text-center text-xs text-text-tertiary">
-                        Uses your Epitech Office365 credentials
+                        Uses your Office365 credentials through the Epitech
+                        Intranet
                     </Text>
                 </View>
 
                 {/* Bottom Info */}
                 <Text className="mt-8 text-center text-xs text-text-disabled">
-                    Powered by Epitech Intranet • Secure Authentication
+                    Powered by Epitech
                 </Text>
             </View>
         </KeyboardAvoidingView>

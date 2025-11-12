@@ -47,6 +47,7 @@ import type { IIntraEvent } from "../types/IIntraEvent";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Student {
     email: string;
@@ -189,7 +190,11 @@ export default function PresenceScreen() {
                             onPress={() => navigation.goBack()}
                             className="mr-3"
                         >
-                            <Text className="text-2xl text-white">←</Text>
+                            <Ionicons
+                                name="arrow-back"
+                                size={24}
+                                color="white"
+                            />
                         </TouchableOpacity>
                         <View className="flex-1">
                             <Text className="text-xl font-bold text-white">
@@ -210,11 +215,13 @@ export default function PresenceScreen() {
                     </View>
                     <TouchableOpacity
                         onPress={handleLogout}
-                        className="rounded-lg border border-white/30 bg-white/20 px-4 py-2"
+                        className="ml-2 rounded-lg border border-white/30 bg-white/20 px-4 py-2"
                     >
-                        <Text className="text-sm font-semibold text-white">
-                            Logout
-                        </Text>
+                        <Ionicons
+                            name="log-out-outline"
+                            size={24}
+                            color="white"
+                        />
                     </TouchableOpacity>
                 </View>
 
@@ -233,7 +240,7 @@ export default function PresenceScreen() {
                                     : "text-white"
                             }`}
                         >
-                            📷 QR CODE
+                            QR CODE
                         </Text>
                     </TouchableOpacity>
 
@@ -251,7 +258,7 @@ export default function PresenceScreen() {
                                     : "text-white/60"
                             }`}
                         >
-                            📱 NFC CARD
+                            NFC CARD
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -264,7 +271,7 @@ export default function PresenceScreen() {
                     className="mt-3 rounded-lg border-2 border-white/40 bg-white/10 py-3"
                 >
                     <Text className="text-center text-sm font-bold text-white">
-                        ✍️ MANUAL ATTENDANCE
+                        MANUAL ATTENDANCE
                     </Text>
                 </TouchableOpacity>
             </View>

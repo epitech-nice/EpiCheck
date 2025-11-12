@@ -192,7 +192,7 @@ export default function SettingsScreen() {
                         onPress={() => navigation.goBack()}
                         className="mr-3"
                     >
-                        <Text className="text-2xl text-white">←</Text>
+                        <Ionicons name="arrow-back" size={24} color="white" />
                     </TouchableOpacity>
                     <Text className="text-xl font-bold text-white">
                         Settings
@@ -200,12 +200,12 @@ export default function SettingsScreen() {
                 </View>
             </View>
 
-            <ScrollView className="flex-1 bg-background">
+            <ScrollView className="flex-1">
                 {/* Theme Section */}
                 <View className="m-4 rounded-lg border border-card-border bg-card-bg shadow-sm">
                     <View className="border-b border-border p-4">
                         <Text className="text-lg font-bold text-text-primary">
-                            🌓 Theme
+                            THEME
                         </Text>
                         <Text className="mt-1 text-xs text-text-secondary">
                             Choose your preferred theme
@@ -219,7 +219,7 @@ export default function SettingsScreen() {
                                 className={`flex-1 rounded-lg border-2 px-4 py-3 ${
                                     theme === "light"
                                         ? "border-primary bg-status-info-bg"
-                                        : "border-border bg-background-secondary"
+                                        : "border-border"
                                 }`}
                             >
                                 <Text
@@ -229,7 +229,7 @@ export default function SettingsScreen() {
                                             : "text-text-secondary"
                                     }`}
                                 >
-                                    ☀️ Light
+                                    <Ionicons name="sunny" size={16} /> LIGHT
                                 </Text>
                             </TouchableOpacity>
 
@@ -248,7 +248,7 @@ export default function SettingsScreen() {
                                             : "text-text-secondary"
                                     }`}
                                 >
-                                    🌙 Dark
+                                    <Ionicons name="moon" size={16} /> DARK
                                 </Text>
                             </TouchableOpacity>
 
@@ -267,14 +267,16 @@ export default function SettingsScreen() {
                                             : "text-text-secondary"
                                     }`}
                                 >
-                                    📱 System
+                                    <Ionicons name="phone-portrait" size={16} />{" "}
+                                    SYSTEM
                                 </Text>
                             </TouchableOpacity>
                         </View>
 
                         {theme === "system" && (
                             <Text className="mt-2 text-center text-xs text-text-tertiary">
-                                Using {isDark ? "dark" : "light"} mode from system settings
+                                Using {isDark ? "dark" : "light"} mode from
+                                system settings
                             </Text>
                         )}
                     </View>
@@ -284,7 +286,7 @@ export default function SettingsScreen() {
                 <View className="m-4 rounded-lg border border-card-border bg-card-bg shadow-sm">
                     <View className="border-b border-border p-4">
                         <Text className="text-lg font-bold text-text-primary">
-                            🔊 Sound Settings
+                            SOUND SETTINGS
                         </Text>
                         <Text className="mt-1 text-xs text-text-secondary">
                             Customize success and error sounds
@@ -296,7 +298,7 @@ export default function SettingsScreen() {
                         <View className="mb-3 flex-row items-center justify-between">
                             <View className="flex-1">
                                 <Text className="font-semibold text-text-primary">
-                                    Success Sound
+                                    SUCCESS SOUND
                                 </Text>
                                 <Text className="mt-0.5 text-xs text-text-tertiary">
                                     {hasCustomSuccess ? "Custom" : "Default"}
@@ -307,7 +309,7 @@ export default function SettingsScreen() {
                                 className="rounded-lg bg-primary px-4 py-2"
                             >
                                 <Text className="text-sm font-semibold text-white">
-                                    🔊 Test
+                                    <Ionicons name="volume-high" size={16} />
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -318,7 +320,8 @@ export default function SettingsScreen() {
                                 className="flex-1 rounded-lg border border-status-success bg-status-success-bg px-4 py-3"
                             >
                                 <Text className="text-center text-sm font-semibold text-status-success">
-                                    📁 Import Sound
+                                    <Ionicons name="folder-open" size={16} />{" "}
+                                    IMPORT SOUND
                                 </Text>
                             </TouchableOpacity>
 
@@ -328,7 +331,8 @@ export default function SettingsScreen() {
                                     className="flex-1 rounded-lg border border-status-error bg-status-error-bg px-4 py-3"
                                 >
                                     <Text className="text-center text-sm font-semibold text-status-error">
-                                        ↺ Reset
+                                        <Ionicons name="refresh" size={16} />{" "}
+                                        RESET
                                     </Text>
                                 </TouchableOpacity>
                             )}
@@ -340,7 +344,7 @@ export default function SettingsScreen() {
                         <View className="mb-3 flex-row items-center justify-between">
                             <View className="flex-1">
                                 <Text className="font-semibold text-text-primary">
-                                    Error Sound
+                                    ERROR SOUND
                                 </Text>
                                 <Text className="mt-0.5 text-xs text-text-tertiary">
                                     {hasCustomError ? "Custom" : "Default"}
@@ -351,7 +355,7 @@ export default function SettingsScreen() {
                                 className="rounded-lg bg-status-error px-4 py-2"
                             >
                                 <Text className="text-sm font-semibold text-white">
-                                    🔊 Test
+                                    <Ionicons name="volume-high" size={16} />
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -362,7 +366,8 @@ export default function SettingsScreen() {
                                 className="flex-1 rounded-lg border border-status-success bg-status-success-bg px-4 py-3"
                             >
                                 <Text className="text-center text-sm font-semibold text-status-success">
-                                    📁 Import Sound
+                                    <Ionicons name="folder-open" size={16} />{" "}
+                                    IMPORT SOUND
                                 </Text>
                             </TouchableOpacity>
 
@@ -372,7 +377,8 @@ export default function SettingsScreen() {
                                     className="flex-1 rounded-lg border border-status-error bg-status-error-bg px-4 py-3"
                                 >
                                     <Text className="text-center text-sm font-semibold text-status-error">
-                                        ↺ Reset
+                                        <Ionicons name="refresh" size={16} />{" "}
+                                        RESET
                                     </Text>
                                 </TouchableOpacity>
                             )}

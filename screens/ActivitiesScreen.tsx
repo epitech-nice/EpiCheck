@@ -33,6 +33,7 @@ import {
     ActivityIndicator,
     RefreshControl,
     Alert,
+    Image,
 } from "react-native";
 
 // import office365Auth from "../services/office365Auth";
@@ -178,9 +179,9 @@ export default function ActivitiesScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 bg-background">
+            <SafeAreaView className="flex-1">
                 <View className="flex-1 items-center justify-center">
-                    <ActivityIndicator size="large" color="rgb(var(--color-primary))" />
+                    <ActivityIndicator size="large" />
                     <Text className="mt-4 font-semibold text-text-primary">
                         Loading activities...
                     </Text>
@@ -196,9 +197,11 @@ export default function ActivitiesScreen() {
                 <View className="mb-2 flex-row items-center justify-between">
                     <View className="flex-1 flex-row items-center">
                         <View className="mr-3 h-10 w-10 items-center justify-center rounded-lg">
-                            <Text className="text-xl font-bold text-white">
-                                E
-                            </Text>
+                            <Image
+                                source={require("../assets/img/epicheck-icon.png")}
+                                className="absolute h-10 w-10 rounded-md bg-white"
+                                resizeMode="contain"
+                            />
                         </View>
                         <View className="flex-1">
                             <Text className="text-2xl font-bold text-white">
@@ -219,13 +222,17 @@ export default function ActivitiesScreen() {
                             onPress={() => navigation.navigate("Settings")}
                             className="rounded-lg border border-white/30 bg-white/20 px-3 py-2"
                         >
-                            <Ionicons name="cog" size={24} />
+                            <Ionicons name="cog" size={24} color="white" />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleLogout}
                             className="rounded-lg border border-white/30 bg-white/20 px-3 py-2"
                         >
-                            <Ionicons name="log-out" size={24} color="red" />
+                            <Ionicons
+                                name="log-out-outline"
+                                size={24}
+                                color="white"
+                            />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -236,7 +243,7 @@ export default function ActivitiesScreen() {
                     className="mt-3 rounded-lg border border-white/30 bg-white/20 px-4 py-3"
                 >
                     <Text className="text-center font-semibold text-white">
-                        📷 Quick Scan (No Event)
+                        QUICK SCAN (NO EVENT)
                     </Text>
                 </TouchableOpacity>
             </View>

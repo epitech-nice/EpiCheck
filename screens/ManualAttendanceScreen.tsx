@@ -43,6 +43,7 @@ import type { IIntraStudent } from "../types/IIntraStudent";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 
 type RootStackParamList = {
     Login: undefined;
@@ -219,13 +220,16 @@ export default function ManualAttendanceScreen() {
             <SafeAreaView className="flex-1 bg-background">
                 <View className="flex-1 items-center justify-center p-4">
                     <Text className="text-center text-lg text-status-error">
-                        No event selected. Please go back and select an activity.
+                        No event selected. Please go back and select an
+                        activity.
                     </Text>
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
                         className="mt-4 rounded-lg bg-primary px-6 py-3"
                     >
-                        <Text className="font-semibold text-white">Go Back</Text>
+                        <Text className="font-semibold text-white">
+                            Go Back
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -258,24 +262,32 @@ export default function ManualAttendanceScreen() {
                         disabled={isLoading}
                         className="rounded-lg border border-white/30 bg-white/20 px-4 py-2"
                     >
-                        <Text className="text-sm font-semibold text-white">
-                            {isLoading ? "..." : "↻ Refresh"}
-                        </Text>
+                        {isLoading ? (
+                            <ActivityIndicator size="small" color="white" />
+                        ) : (
+                            <Ionicons name="refresh" size={20} color="white" />
+                        )}
                     </TouchableOpacity>
                 </View>
 
                 {/* Stats */}
                 <View className="mb-4 flex-row rounded-lg bg-white/20 p-3">
                     <View className="flex-1 items-center">
-                        <Text className="text-2xl font-bold text-white">{present}</Text>
+                        <Text className="text-2xl font-bold text-white">
+                            {present}
+                        </Text>
                         <Text className="text-xs text-white/80">Present</Text>
                     </View>
                     <View className="flex-1 items-center border-x border-white/30">
-                        <Text className="text-2xl font-bold text-white">{absent}</Text>
+                        <Text className="text-2xl font-bold text-white">
+                            {absent}
+                        </Text>
                         <Text className="text-xs text-white/80">Absent</Text>
                     </View>
                     <View className="flex-1 items-center">
-                        <Text className="text-2xl font-bold text-white">{total}</Text>
+                        <Text className="text-2xl font-bold text-white">
+                            {total}
+                        </Text>
                         <Text className="text-xs text-white/80">Total</Text>
                     </View>
                 </View>
@@ -285,7 +297,9 @@ export default function ManualAttendanceScreen() {
                     <TouchableOpacity
                         onPress={() => setSelectedTab("list")}
                         className={`flex-1 rounded-md py-3 ${
-                            selectedTab === "list" ? "bg-white" : "bg-transparent"
+                            selectedTab === "list"
+                                ? "bg-white"
+                                : "bg-transparent"
                         }`}
                     >
                         <Text
@@ -295,14 +309,16 @@ export default function ManualAttendanceScreen() {
                                     : "text-white"
                             }`}
                         >
-                            📋 Student List
+                            STUDENT LIST
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => setSelectedTab("manual")}
                         className={`flex-1 rounded-md py-3 ${
-                            selectedTab === "manual" ? "bg-white" : "bg-transparent"
+                            selectedTab === "manual"
+                                ? "bg-white"
+                                : "bg-transparent"
                         }`}
                     >
                         <Text
@@ -312,7 +328,7 @@ export default function ManualAttendanceScreen() {
                                     : "text-white"
                             }`}
                         >
-                            ✍️ Manual Entry
+                            MANUAL ENTRY
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -334,7 +350,8 @@ export default function ManualAttendanceScreen() {
                             />
                             {searchQuery.length > 0 && (
                                 <Text className="mt-1 text-xs text-text-secondary">
-                                    Found {filteredStudents.length} of {total} students
+                                    Found {filteredStudents.length} of {total}{" "}
+                                    students
                                 </Text>
                             )}
                         </View>
@@ -342,7 +359,7 @@ export default function ManualAttendanceScreen() {
                         {/* Student List */}
                         {isLoading ? (
                             <View className="flex-1 items-center justify-center">
-                                <ActivityIndicator size="large" color="rgb(var(--color-primary))" />
+                                <ActivityIndicator size="large" />
                                 <Text className="mt-4 text-text-secondary">
                                     Loading students...
                                 </Text>
@@ -365,10 +382,12 @@ export default function ManualAttendanceScreen() {
                                         >
                                             <View className="mb-2">
                                                 <Text className="text-base font-semibold text-text-primary">
-                                                    {student.title || student.login}
+                                                    {student.title ||
+                                                        student.login}
                                                 </Text>
                                                 <Text className="text-sm text-text-secondary">
-                                                    {student.email || student.login}
+                                                    {student.email ||
+                                                        student.login}
                                                 </Text>
                                             </View>
 
@@ -377,15 +396,17 @@ export default function ManualAttendanceScreen() {
                                                     onPress={() =>
                                                         markPresence(
                                                             student.login,
-                                                            "present"
+                                                            "present",
                                                         )
                                                     }
                                                     disabled={
                                                         isProcessing ||
-                                                        student.presenceStatus === "present"
+                                                        student.presenceStatus ===
+                                                            "present"
                                                     }
                                                     className={`flex-1 rounded-lg py-2.5 ${
-                                                        student.presenceStatus === "present"
+                                                        student.presenceStatus ===
+                                                        "present"
                                                             ? "bg-status-success opacity-90"
                                                             : "bg-status-success"
                                                     } ${
@@ -395,7 +416,8 @@ export default function ManualAttendanceScreen() {
                                                     }`}
                                                 >
                                                     <Text className="text-center text-sm font-semibold text-white">
-                                                        {student.presenceStatus === "present"
+                                                        {student.presenceStatus ===
+                                                        "present"
                                                             ? "✓ Present"
                                                             : "Mark Present"}
                                                     </Text>
@@ -405,15 +427,17 @@ export default function ManualAttendanceScreen() {
                                                     onPress={() =>
                                                         markPresence(
                                                             student.login,
-                                                            "absent"
+                                                            "absent",
                                                         )
                                                     }
                                                     disabled={
                                                         isProcessing ||
-                                                        student.presenceStatus === "absent"
+                                                        student.presenceStatus ===
+                                                            "absent"
                                                     }
                                                     className={`flex-1 rounded-lg py-2.5 ${
-                                                        student.presenceStatus === "absent"
+                                                        student.presenceStatus ===
+                                                        "absent"
                                                             ? "bg-status-error opacity-90"
                                                             : "bg-status-error"
                                                     } ${
@@ -423,7 +447,8 @@ export default function ManualAttendanceScreen() {
                                                     }`}
                                                 >
                                                     <Text className="text-center text-sm font-semibold text-white">
-                                                        {student.presenceStatus === "absent"
+                                                        {student.presenceStatus ===
+                                                        "absent"
                                                             ? "✗ Absent"
                                                             : "Mark Absent"}
                                                     </Text>
@@ -441,8 +466,9 @@ export default function ManualAttendanceScreen() {
                             Enter Student Email or Login
                         </Text>
                         <Text className="mb-4 text-sm text-text-secondary">
-                            Type the student&apos;s email (e.g., firstname.lastname@epitech.eu)
-                            or login to mark them present.
+                            Type the student&apos;s email (e.g.,
+                            firstname.lastname@epitech.eu) or login to mark them
+                            present.
                         </Text>
 
                         <TextInput
@@ -466,7 +492,9 @@ export default function ManualAttendanceScreen() {
                             }`}
                         >
                             <Text className="text-center text-base font-semibold text-white">
-                                {isProcessing ? "Processing..." : "Mark Present"}
+                                {isProcessing
+                                    ? "Processing..."
+                                    : "Mark Present"}
                             </Text>
                         </TouchableOpacity>
 
@@ -475,9 +503,9 @@ export default function ManualAttendanceScreen() {
                                 💡 Tips:
                             </Text>
                             <Text className="text-sm text-status-info">
-                                • You can enter email or login{"\n"}
-                                • The system will automatically find the student{"\n"}
-                                • Students must be registered for this event
+                                • You can enter email or login{"\n"}• The system
+                                will automatically find the student{"\n"}•
+                                Students must be registered for this event
                             </Text>
                         </View>
                     </View>

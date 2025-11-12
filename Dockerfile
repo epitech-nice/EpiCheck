@@ -22,14 +22,14 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build the web version of the app
-RUN npm run web -- --no-dev --minify
+# Build the web version of the app for production
+RUN npx expo export:web
 
 # Stage 2: Production
 FROM nginx:alpine
 
 # Copy built files from builder stage
-COPY --from=builder /app/web-build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration if needed
 COPY nginx.conf /etc/nginx/conf.d/default.conf

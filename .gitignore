@@ -30,6 +30,10 @@
 # dependencies
 node_modules/
 
+# Proxy server
+proxy-server/node_modules/
+proxy-server/.env
+
 # Expo
 .expo/
 dist/

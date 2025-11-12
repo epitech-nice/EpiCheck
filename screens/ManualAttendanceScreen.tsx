@@ -63,7 +63,9 @@ export default function ManualAttendanceScreen() {
     const event = (route.params as any)?.event as IIntraEvent | undefined;
 
     const [students, setStudents] = useState<StudentWithPresence[]>([]);
-    const [filteredStudents, setFilteredStudents] = useState<StudentWithPresence[]>([]);
+    const [filteredStudents, setFilteredStudents] = useState<
+        StudentWithPresence[]
+    >([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [manualEmail, setManualEmail] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +91,7 @@ export default function ManualAttendanceScreen() {
                 (s) =>
                     s.login?.toLowerCase().includes(query) ||
                     s.email?.toLowerCase().includes(query) ||
-                    s.title?.toLowerCase().includes(query)
+                    s.title?.toLowerCase().includes(query),
             );
             setFilteredStudents(filtered);
         }
@@ -104,25 +106,35 @@ export default function ManualAttendanceScreen() {
 
         setIsLoading(true);
         try {
-            const registeredStudents = await intraApi.getRegisteredStudents(event);
+            const registeredStudents =
+                await intraApi.getRegisteredStudents(event);
 
             // Map students with their current presence status
             const studentsWithPresence = registeredStudents.map((s) => ({
                 ...s,
-                presenceStatus: (s.present || "n/a") as "present" | "absent" | "n/a",
+                presenceStatus: (s.present || "n/a") as
+                    | "present"
+                    | "absent"
+                    | "n/a",
             }));
 
             setStudents(studentsWithPresence);
             setFilteredStudents(studentsWithPresence);
         } catch (error: any) {
             console.error("Failed to load students:", error);
-            Alert.alert("Error", "Failed to load student list: " + error.message);
+            Alert.alert(
+                "Error",
+                "Failed to load student list: " + error.message,
+            );
         } finally {
             setIsLoading(false);
         }
     };
 
-    const markPresence = async (studentLogin: string, status: "present" | "absent") => {
+    const markPresence = async (
+        studentLogin: string,
+        status: "present" | "absent",
+    ) => {
         if (!event) {
             Alert.alert("Error", "No event selected");
             return;
@@ -143,8 +155,8 @@ export default function ManualAttendanceScreen() {
                 prev.map((s) =>
                     s.login === studentLogin
                         ? { ...s, presenceStatus: status }
-                        : s
-                )
+                        : s,
+                ),
             );
 
             Alert.alert("Success", `Marked ${studentLogin} as ${status}`);
@@ -190,8 +202,12 @@ export default function ManualAttendanceScreen() {
     };
 
     const getPresenceCount = () => {
-        const present = students.filter((s) => s.presenceStatus === "present").length;
-        const absent = students.filter((s) => s.presenceStatus === "absent").length;
+        const present = students.filter(
+            (s) => s.presenceStatus === "present",
+        ).length;
+        const absent = students.filter(
+            (s) => s.presenceStatus === "absent",
+        ).length;
         const total = students.length;
         return { present, absent, total };
     };

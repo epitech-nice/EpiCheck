@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # Main application (web build)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: epicheck-app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - epicheck-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Proxy server (for API proxying)
+  proxy:
+    build:
+      context: ./proxy-server
+      dockerfile: Dockerfile
+    container_name: epicheck-proxy
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    networks:
+      - epicheck-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - app
+
+networks:
+  epicheck-network:
+    driver: bridge
+
+volumes:
+  app_data:
+    driver: local

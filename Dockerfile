@@ -22,8 +22,8 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build the web version of the app for production
-RUN npx expo export:web
+# Build the web version of the app for production using Metro
+RUN npx expo export --platform web
 
 # Stage 2: Production
 FROM nginx:alpine

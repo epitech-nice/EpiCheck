@@ -16,19 +16,21 @@ Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remot
 
 ## Why Mobile Works But Web Doesn't
 
-| Platform | CORS Restrictions | Explanation |
-|----------|-------------------|-------------|
+| Platform                 | CORS Restrictions  | Explanation                                               |
+| ------------------------ | ------------------ | --------------------------------------------------------- |
 | **Mobile (iOS/Android)** | ✅ No restrictions | Native apps don't have CORS. HTTP requests work directly. |
-| **Web Browser** | ❌ Blocked by CORS | Browsers enforce same-origin policy for security. |
+| **Web Browser**          | ❌ Blocked by CORS | Browsers enforce same-origin policy for security.         |
 
 ## Current Status
 
 ✅ **Working on Mobile:**
+
 - Cookie extraction via WebView
 - Direct API calls to Intranet
 - Full functionality
 
 ❌ **Limited on Web:**
+
 - Cookie can be stored
 - API calls are blocked by browser
 - Cannot fetch user data, activities, presence, etc.
@@ -42,14 +44,17 @@ Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remot
 **Recommendation:** Inform web users that full functionality requires the mobile app.
 
 **Pros:**
+
 - No additional development
 - Maintains security
 - Simple to implement
 
 **Cons:**
+
 - Web version has limited functionality
 
 **Implementation:** ✅ Already done
+
 - Warning messages in UI
 - Clear guidance to download mobile app
 
@@ -60,6 +65,7 @@ Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remot
 Create a backend server that forwards requests to Epitech Intranet, bypassing CORS restrictions.
 
 **Architecture:**
+
 ```
 Web App → Your Backend Proxy → Epitech Intranet API
 ```
@@ -68,55 +74,63 @@ Web App → Your Backend Proxy → Epitech Intranet API
 
 ```javascript
 // server.js
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 app.use(cors()); // Enable CORS for your web app
 app.use(express.json());
 
 // Proxy endpoint
-app.post('/api/intra-proxy', async (req, res) => {
-  const { endpoint, cookie } = req.body;
-  
-  try {
-    const response = await axios.get(`https://intra.epitech.eu${endpoint}`, {
-      headers: {
-        'Cookie': `user=${cookie}`,
-      },
-    });
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+app.post("/api/intra-proxy", async (req, res) => {
+    const { endpoint, cookie } = req.body;
+
+    try {
+        const response = await axios.get(
+            `https://intra.epitech.eu${endpoint}`,
+            {
+                headers: {
+                    Cookie: `user=${cookie}`,
+                },
+            },
+        );
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.listen(3000, () => {
-  console.log('Proxy server running on port 3000');
+    console.log("Proxy server running on port 3000");
 });
 ```
 
 **Frontend Update:**
+
 ```typescript
 // intraApi.ts - Add proxy mode for web
-const BASE_URL = Platform.OS === 'web' 
-  ? 'https://your-proxy-server.com/api/intra-proxy'
-  : 'https://intra.epitech.eu';
+const BASE_URL =
+    Platform.OS === "web"
+        ? "https://your-proxy-server.com/api/intra-proxy"
+        : "https://intra.epitech.eu";
 ```
 
 **Pros:**
+
 - Full functionality on web
 - Secure (your server handles authentication)
 - Can add caching, rate limiting
 
 **Cons:**
+
 - Requires backend infrastructure
 - Additional hosting costs
 - Maintenance overhead
 - Security responsibility
 
 **Deployment Options:**
+
 - Heroku (free tier available)
 - Vercel/Netlify (serverless functions)
 - AWS Lambda
@@ -129,14 +143,17 @@ const BASE_URL = Platform.OS === 'web'
 Create a browser extension that bypasses CORS restrictions.
 
 **How it works:**
+
 - Browser extensions can make cross-origin requests
 - Extension acts as a bridge between web app and API
 
 **Pros:**
+
 - No backend needed
 - Full API access
 
 **Cons:**
+
 - Users must install extension
 - Limited to Chrome/Firefox/Edge
 - Additional app to maintain
@@ -149,16 +166,19 @@ Create a browser extension that bypasses CORS restrictions.
 Check if Epitech provides an official OAuth flow or API key system for third-party apps.
 
 **Steps:**
+
 1. Contact Epitech IT department
 2. Request API access or OAuth credentials
 3. Use official authentication flow
 
 **Pros:**
+
 - Official support
 - Proper CORS headers
 - No workarounds needed
 
 **Cons:**
+
 - May not be available
 - Requires Epitech approval
 - Potential delays
@@ -170,6 +190,7 @@ Check if Epitech provides an official OAuth flow or API key system for third-par
 For this project: **Solution 1** (Use Mobile App)
 
 **Rationale:**
+
 - EpiCheck is primarily a mobile app
 - RFID/NFC scanning requires mobile device
 - QR code scanning requires camera
@@ -177,6 +198,7 @@ For this project: **Solution 1** (Use Mobile App)
 - No backend infrastructure needed
 
 **Web Version Purpose:**
+
 - Development/testing
 - Limited administrative access
 - Cookie management via Settings
@@ -192,13 +214,14 @@ Instead of full functionality, make the web version read-only with cached data:
 3. Users must use mobile for updates
 
 **Example:**
+
 ```typescript
-if (Platform.OS === 'web') {
-  // Show cached data only
-  return getCachedActivities();
+if (Platform.OS === "web") {
+    // Show cached data only
+    return getCachedActivities();
 } else {
-  // Fetch fresh data from API
-  return fetchActivitiesFromIntranet();
+    // Fetch fresh data from API
+    return fetchActivitiesFromIntranet();
 }
 ```
 
@@ -207,6 +230,7 @@ if (Platform.OS === 'web') {
 ## Testing CORS Solutions
 
 ### Test if proxy works:
+
 ```bash
 curl -X POST http://localhost:3000/api/intra-proxy \
   -H "Content-Type: application/json" \
@@ -214,6 +238,7 @@ curl -X POST http://localhost:3000/api/intra-proxy \
 ```
 
 ### Test browser extension:
+
 1. Load unpacked extension in Chrome
 2. Check console for CORS errors
 3. Verify API calls succeed
@@ -231,20 +256,21 @@ curl -X POST http://localhost:3000/api/intra-proxy \
 5. **Environment Variables:** Store sensitive config securely
 
 ### Example Security Middleware:
+
 ```javascript
 // Rate limiting
-const rateLimit = require('express-rate-limit');
+const rateLimit = require("express-rate-limit");
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
 });
 
-app.use('/api/', limiter);
+app.use("/api/", limiter);
 
 // Cookie validation
 function validateCookie(cookie) {
-  // Add validation logic
-  return cookie && cookie.length > 50;
+    // Add validation logic
+    return cookie && cookie.length > 50;
 }
 ```
 

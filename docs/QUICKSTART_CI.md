@@ -37,7 +37,7 @@ Edit `kubernetes/ingress.yaml` with your domain:
 
 ```yaml
 hosts:
-  - your-domain.com
+    - your-domain.com
 ```
 
 ### 4. Trigger Deployment
@@ -124,13 +124,13 @@ kubectl set image deployment/epicheck-app \
 
 ## 🎯 Deployment Triggers
 
-| Trigger | Action | Deploy? |
-|---------|--------|---------|
-| Push to `main` | Build + Deploy to Production | ✅ Yes |
-| Push to `develop` | Build + Deploy to Staging | ✅ Yes |
-| Push tag `v*` | Build + Deploy with version | ✅ Yes |
-| Pull Request | Build only | ❌ No |
-| Manual | Build + Deploy | ✅ Yes |
+| Trigger           | Action                       | Deploy? |
+| ----------------- | ---------------------------- | ------- |
+| Push to `main`    | Build + Deploy to Production | ✅ Yes  |
+| Push to `develop` | Build + Deploy to Staging    | ✅ Yes  |
+| Push tag `v*`     | Build + Deploy with version  | ✅ Yes  |
+| Pull Request      | Build only                   | ❌ No   |
+| Manual            | Build + Deploy               | ✅ Yes  |
 
 ## 🐛 Troubleshooting
 
@@ -139,6 +139,7 @@ kubectl set image deployment/epicheck-app \
 **Issue**: Cannot connect to Kubernetes cluster
 
 **Solution**:
+
 ```bash
 # Regenerate and update KUBE_CONFIG secret
 cat ~/.kube/config | base64 | gh secret set KUBE_CONFIG
@@ -149,6 +150,7 @@ cat ~/.kube/config | base64 | gh secret set KUBE_CONFIG
 **Issue**: Cannot push to container registry
 
 **Solution**:
+
 1. Check repository settings → Actions → General
 2. Enable "Read and write permissions" for GITHUB_TOKEN
 3. Re-run workflow
@@ -158,6 +160,7 @@ cat ~/.kube/config | base64 | gh secret set KUBE_CONFIG
 **Issue**: Ingress or service misconfiguration
 
 **Solution**:
+
 ```bash
 # Check ingress
 kubectl describe ingress epicheck-ingress -n epicheck
@@ -180,23 +183,24 @@ kubectl get events -n epicheck --sort-by='.lastTimestamp'
 
 ## 🔐 Required Secrets
 
-| Secret | Description |
-|--------|-------------|
-| `KUBE_CONFIG` | Base64-encoded Kubernetes config |
-| `EPITECH_USERNAME` | Epitech Intra username |
-| `EPITECH_PASSWORD` | Epitech Intra password |
-| `OFFICE365_CLIENT_ID` | Office 365 OAuth Client ID |
-| `OFFICE365_CLIENT_SECRET` | Office 365 OAuth Secret |
-| `OFFICE365_TENANT_ID` | Office 365 Tenant ID |
-| `AZURE_AD_CLIENT_ID` | Azure AD Client ID |
-| `AZURE_AD_CLIENT_SECRET` | Azure AD Client Secret |
-| `AZURE_AD_TENANT_ID` | Azure AD Tenant ID |
-| `API_KEY` | General API key |
-| `SESSION_SECRET` | Session encryption secret |
+| Secret                    | Description                      |
+| ------------------------- | -------------------------------- |
+| `KUBE_CONFIG`             | Base64-encoded Kubernetes config |
+| `EPITECH_USERNAME`        | Epitech Intra username           |
+| `EPITECH_PASSWORD`        | Epitech Intra password           |
+| `OFFICE365_CLIENT_ID`     | Office 365 OAuth Client ID       |
+| `OFFICE365_CLIENT_SECRET` | Office 365 OAuth Secret          |
+| `OFFICE365_TENANT_ID`     | Office 365 Tenant ID             |
+| `AZURE_AD_CLIENT_ID`      | Azure AD Client ID               |
+| `AZURE_AD_CLIENT_SECRET`  | Azure AD Client Secret           |
+| `AZURE_AD_TENANT_ID`      | Azure AD Tenant ID               |
+| `API_KEY`                 | General API key                  |
+| `SESSION_SECRET`          | Session encryption secret        |
 
 ## 🆘 Support
 
 For issues:
+
 1. Check workflow logs in GitHub Actions
 2. Check [README.md](.github/workflows/README.md) for detailed troubleshooting
 3. Create an issue in the repository

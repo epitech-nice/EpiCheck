@@ -397,7 +397,10 @@ function WebAuthComponent({ onCancel, onSuccess }: any) {
 
         setIsSubmitting(true);
         try {
-            console.log("[Web] Submitting cookie:", trimmedCookie.substring(0, 20) + "...");
+            console.log(
+                "[Web] Submitting cookie:",
+                trimmedCookie.substring(0, 20) + "...",
+            );
 
             // Save the cookie using intraAuth service
             await intraAuth.setTestCookie(trimmedCookie);
@@ -407,20 +410,23 @@ function WebAuthComponent({ onCancel, onSuccess }: any) {
             // Success message - proxy server handles CORS
             alert(
                 "✅ Authentication Successful\n\n" +
-                "Your Intranet cookie has been saved!\n\n" +
-                "� The app now uses a proxy server to bypass browser CORS restrictions.\n\n" +
-                "Make sure the proxy server is running on http://localhost:3001"
+                    "Your Intranet cookie has been saved!\n\n" +
+                    "� The app now uses a proxy server to bypass browser CORS restrictions.\n\n" +
+                    "Make sure the proxy server is running on http://localhost:3001",
             );
 
             // Call onSuccess to close the modal
             onSuccess(trimmedCookie);
         } catch (error) {
             console.error("[Web] Failed to save cookie:", error);
-            alert("Failed to save cookie. Please try again or use Settings → Developer Options.");
+            alert(
+                "Failed to save cookie. Please try again or use Settings → Developer Options.",
+            );
         } finally {
             setIsSubmitting(false);
         }
-    };    return (
+    };
+    return (
         <SafeAreaView className="flex-1 bg-background">
             <View className="flex-row items-center justify-between bg-epitech-blue p-4">
                 <View className="flex-1">
@@ -446,7 +452,8 @@ function WebAuthComponent({ onCancel, onSuccess }: any) {
                     </Text>
                     <Text className="text-sm leading-relaxed text-status-info">
                         Automatic authentication is not available on web due to
-                        browser security restrictions. Follow the steps below to login.
+                        browser security restrictions. Follow the steps below to
+                        login.
                     </Text>
                 </View>
 
@@ -456,8 +463,9 @@ function WebAuthComponent({ onCancel, onSuccess }: any) {
                         🚀 Proxy Server Solution
                     </Text>
                     <Text className="mb-2 text-sm leading-relaxed text-green-800">
-                        The app uses a local proxy server to bypass browser CORS restrictions. 
-                        Make sure the proxy is running on port 3001.
+                        The app uses a local proxy server to bypass browser CORS
+                        restrictions. Make sure the proxy is running on port
+                        3001.
                     </Text>
                     <Text className="text-xs font-semibold text-green-900">
                         � See proxy-server/README.md for setup instructions
@@ -484,8 +492,10 @@ function WebAuthComponent({ onCancel, onSuccess }: any) {
                         </Text>
                         <Text className="mb-3 text-sm text-text-secondary">
                             1. Press F12 to open DevTools{"\n"}
-                            2. Go to Application → Cookies → intra.epitech.eu{"\n"}
-                            3. Find the &quot;user&quot; cookie and copy its value{"\n"}
+                            2. Go to Application → Cookies → intra.epitech.eu
+                            {"\n"}
+                            3. Find the &quot;user&quot; cookie and copy its
+                            value{"\n"}
                             4. Paste it below or in Settings → Developer Options
                         </Text>
                     </View>
@@ -516,7 +526,9 @@ function WebAuthComponent({ onCancel, onSuccess }: any) {
                         />
                         <TouchableOpacity
                             onPress={handleCookieSubmit}
-                            disabled={isSubmitting || cookieInput.trim().length < 20}
+                            disabled={
+                                isSubmitting || cookieInput.trim().length < 20
+                            }
                             className={`rounded-lg px-4 py-3 ${
                                 isSubmitting || cookieInput.trim().length < 20
                                     ? "bg-gray-400"

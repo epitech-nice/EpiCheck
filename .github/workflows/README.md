@@ -31,8 +31,8 @@ Copy the output - you'll need it in the next step.
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
 4. Add the following secret:
-   - Name: `KUBE_CONFIG`
-   - Value: The base64-encoded kubeconfig from above
+    - Name: `KUBE_CONFIG`
+    - Value: The base64-encoded kubeconfig from above
 
 ### Step 2: Configure Application Secrets
 
@@ -40,19 +40,19 @@ Add the following secrets to your GitHub repository:
 
 #### Required Secrets
 
-| Secret Name | Description | Example |
-|------------|-------------|---------|
-| `KUBE_CONFIG` | Base64-encoded Kubernetes config | (from Step 1) |
-| `EPITECH_USERNAME` | Epitech Intra username | `john.doe@epitech.eu` |
-| `EPITECH_PASSWORD` | Epitech Intra password | `your-password` |
-| `OFFICE365_CLIENT_ID` | Office 365 OAuth Client ID | `abc123...` |
-| `OFFICE365_CLIENT_SECRET` | Office 365 OAuth Client Secret | `secret123...` |
-| `OFFICE365_TENANT_ID` | Office 365 Tenant ID | `tenant-id` |
-| `AZURE_AD_CLIENT_ID` | Azure AD Client ID | `client-id` |
-| `AZURE_AD_CLIENT_SECRET` | Azure AD Client Secret | `secret` |
-| `AZURE_AD_TENANT_ID` | Azure AD Tenant ID | `tenant-id` |
-| `API_KEY` | General API key | `your-api-key` |
-| `SESSION_SECRET` | Session secret for encryption | `random-secret-string` |
+| Secret Name               | Description                      | Example                |
+| ------------------------- | -------------------------------- | ---------------------- |
+| `KUBE_CONFIG`             | Base64-encoded Kubernetes config | (from Step 1)          |
+| `EPITECH_USERNAME`        | Epitech Intra username           | `john.doe@epitech.eu`  |
+| `EPITECH_PASSWORD`        | Epitech Intra password           | `your-password`        |
+| `OFFICE365_CLIENT_ID`     | Office 365 OAuth Client ID       | `abc123...`            |
+| `OFFICE365_CLIENT_SECRET` | Office 365 OAuth Client Secret   | `secret123...`         |
+| `OFFICE365_TENANT_ID`     | Office 365 Tenant ID             | `tenant-id`            |
+| `AZURE_AD_CLIENT_ID`      | Azure AD Client ID               | `client-id`            |
+| `AZURE_AD_CLIENT_SECRET`  | Azure AD Client Secret           | `secret`               |
+| `AZURE_AD_TENANT_ID`      | Azure AD Tenant ID               | `tenant-id`            |
+| `API_KEY`                 | General API key                  | `your-api-key`         |
+| `SESSION_SECRET`          | Session secret for encryption    | `random-secret-string` |
 
 #### How to Add Secrets
 
@@ -69,12 +69,12 @@ Edit `kubernetes/ingress.yaml` to set your domain:
 
 ```yaml
 spec:
-  tls:
-  - hosts:
-    - your-domain.com  # Change this
-    secretName: epicheck-tls
-  rules:
-  - host: your-domain.com  # Change this
+    tls:
+        - hosts:
+              - your-domain.com # Change this
+          secretName: epicheck-tls
+    rules:
+        - host: your-domain.com # Change this
 ```
 
 ### Step 4: Verify Kubernetes Cluster
@@ -124,7 +124,7 @@ The pipeline automatically runs on:
 
 1. **Push to main branch** - Deploys to production
 2. **Push to develop branch** - Deploys to staging (if configured)
-3. **Tag creation** (v*) - Versioned deployment
+3. **Tag creation** (v\*) - Versioned deployment
 4. **Pull Request** - Builds only (no deployment)
 
 ### Manual Trigger
@@ -199,6 +199,7 @@ kubectl get events -n epicheck --sort-by='.lastTimestamp'
 **Cause**: Invalid or expired kubeconfig
 
 **Solution**:
+
 1. Generate new kubeconfig
 2. Update `KUBE_CONFIG` secret in GitHub
 3. Re-run workflow
@@ -208,6 +209,7 @@ kubectl get events -n epicheck --sort-by='.lastTimestamp'
 **Cause**: Cannot pull images from GitHub Container Registry
 
 **Solution**:
+
 1. Make images public OR
 2. Create image pull secret:
 
@@ -223,10 +225,10 @@ kubectl create secret docker-registry ghcr-secret \
 
 ```yaml
 spec:
-  template:
-    spec:
-      imagePullSecrets:
-      - name: ghcr-secret
+    template:
+        spec:
+            imagePullSecrets:
+                - name: ghcr-secret
 ```
 
 ### Issue: "No space left on device"
@@ -234,6 +236,7 @@ spec:
 **Cause**: Insufficient storage in cluster
 
 **Solution**:
+
 1. Clean up old resources
 2. Increase PVC size
 3. Add more storage to nodes
@@ -243,6 +246,7 @@ spec:
 **Cause**: Pods not starting in time
 
 **Solution**:
+
 1. Check pod logs: `kubectl logs <pod-name> -n epicheck`
 2. Describe pod: `kubectl describe pod <pod-name> -n epicheck`
 3. Increase timeout in workflow if needed
@@ -278,32 +282,32 @@ Create a dedicated service account with minimal permissions:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: github-actions
-  namespace: epicheck
+    name: github-actions
+    namespace: epicheck
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: github-actions-role
-  namespace: epicheck
+    name: github-actions-role
+    namespace: epicheck
 rules:
-- apiGroups: ["", "apps", "autoscaling", "networking.k8s.io"]
-  resources: ["*"]
-  verbs: ["*"]
+    - apiGroups: ["", "apps", "autoscaling", "networking.k8s.io"]
+      resources: ["*"]
+      verbs: ["*"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: github-actions-binding
-  namespace: epicheck
+    name: github-actions-binding
+    namespace: epicheck
 subjects:
-- kind: ServiceAccount
-  name: github-actions
-  namespace: epicheck
+    - kind: ServiceAccount
+      name: github-actions
+      namespace: epicheck
 roleRef:
-  kind: Role
-  name: github-actions-role
-  apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: github-actions-role
+    apiGroup: rbac.authorization.k8s.io
 ```
 
 ### 2. Rotate Secrets Regularly
@@ -320,9 +324,9 @@ Add to workflow:
 - name: Run Trivy vulnerability scanner
   uses: aquasecurity/trivy-action@master
   with:
-    image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:${{ github.sha }}
-    format: 'sarif'
-    output: 'trivy-results.sarif'
+      image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:${{ github.sha }}
+      format: "sarif"
+      output: "trivy-results.sarif"
 ```
 
 ### 4. Enable Branch Protection
@@ -340,10 +344,9 @@ Create separate workflows for different environments:
 ```yaml
 # .github/workflows/deploy-staging.yml
 on:
-  push:
-    branches:
-      - develop
-
+    push:
+        branches:
+            - develop
 # Use different namespace and secrets
 ```
 
@@ -353,10 +356,10 @@ Add manual approval for production:
 
 ```yaml
 deploy-to-production:
-  environment:
-    name: production
-    url: https://epicheck.example.com
-  needs: build-and-push
+    environment:
+        name: production
+        url: https://epicheck.example.com
+    needs: build-and-push
 ```
 
 ### Notifications
@@ -367,8 +370,8 @@ Add Slack/Discord notifications:
 - name: Notify Slack
   uses: 8398a7/action-slack@v3
   with:
-    status: ${{ job.status }}
-    webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      status: ${{ job.status }}
+      webhook_url: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
 ## 📝 Maintenance

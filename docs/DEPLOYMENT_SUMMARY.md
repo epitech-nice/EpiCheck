@@ -5,54 +5,54 @@
 ### Root Directory Files
 
 1. **Dockerfile** - Production Dockerfile with multi-stage build
-   - Stage 1: Build Expo web app
-   - Stage 2: Serve with Nginx
-   - Includes health checks and optimizations
+    - Stage 1: Build Expo web app
+    - Stage 2: Serve with Nginx
+    - Includes health checks and optimizations
 
 2. **Dockerfile.dev** - Development Dockerfile
-   - Hot reload enabled
-   - All development tools included
-   - Expo CLI pre-installed
+    - Hot reload enabled
+    - All development tools included
+    - Expo CLI pre-installed
 
 3. **docker-compose.yml** - Production Docker Compose
-   - Web app service
-   - Proxy server service
-   - Network configuration
-   - Health checks
+    - Web app service
+    - Proxy server service
+    - Network configuration
+    - Health checks
 
 4. **docker-compose.dev.yml** - Development Docker Compose
-   - Volume mounts for hot reload
-   - Development ports exposed
-   - Interactive TTY enabled
+    - Volume mounts for hot reload
+    - Development ports exposed
+    - Interactive TTY enabled
 
 5. **.dockerignore** - Docker build exclusions
-   - Excludes node_modules, build artifacts, docs, etc.
+    - Excludes node_modules, build artifacts, docs, etc.
 
 6. **nginx.conf** - Nginx configuration
-   - SPA routing support
-   - Gzip compression
-   - Security headers
-   - API proxy configuration
-   - Static asset caching
+    - SPA routing support
+    - Gzip compression
+    - Security headers
+    - API proxy configuration
+    - Static asset caching
 
 7. **DOCKER_DEPLOYMENT.md** - Main deployment documentation
-   - Comprehensive guide for Docker and Kubernetes
-   - Architecture diagrams
-   - Troubleshooting guide
-   - Best practices
+    - Comprehensive guide for Docker and Kubernetes
+    - Architecture diagrams
+    - Troubleshooting guide
+    - Best practices
 
 ### Proxy Server Directory
 
 8. **proxy-server/Dockerfile** - Proxy server Dockerfile
-   - Lightweight Node.js image
-   - Production optimized
-   - Health check included
+    - Lightweight Node.js image
+    - Production optimized
+    - Health check included
 
 ### Kubernetes Directory
 
 9. **kubernetes/namespace.yaml** - Kubernetes namespace
-   - Creates 'epicheck' namespace
-   - Labels for organization
+    - Creates 'epicheck' namespace
+    - Labels for organization
 
 10. **kubernetes/configmap.yaml** - Configuration management
     - Environment variables
@@ -173,43 +173,44 @@ kubectl get all -n epicheck
 ### Required Changes Before Deployment
 
 1. **Docker Images**
-   - Update image registry in `kubernetes/deployment.yaml`
-   - Replace `epicheck:latest` with `your-registry/epicheck:tag`
+    - Update image registry in `kubernetes/deployment.yaml`
+    - Replace `epicheck:latest` with `your-registry/epicheck:tag`
 
 2. **Secrets**
-   - Copy `kubernetes/secrets.yaml.example` to `kubernetes/secrets.yaml`
-   - Fill in actual credentials
-   - Never commit `secrets.yaml` to git
+    - Copy `kubernetes/secrets.yaml.example` to `kubernetes/secrets.yaml`
+    - Fill in actual credentials
+    - Never commit `secrets.yaml` to git
 
 3. **Domain Names**
-   - Update in `kubernetes/ingress.yaml`
-   - Replace `epicheck.example.com` with your domain
+    - Update in `kubernetes/ingress.yaml`
+    - Replace `epicheck.example.com` with your domain
 
 4. **ConfigMap**
-   - Edit `kubernetes/configmap.yaml`
-   - Update API URLs and settings
+    - Edit `kubernetes/configmap.yaml`
+    - Update API URLs and settings
 
 ### Optional Configurations
 
 1. **Resource Limits**
-   - Adjust CPU/Memory in `kubernetes/deployment.yaml`
-   - Based on your workload
+    - Adjust CPU/Memory in `kubernetes/deployment.yaml`
+    - Based on your workload
 
 2. **Scaling**
-   - Modify replica counts in `kubernetes/deployment.yaml`
-   - Adjust HPA settings in `kubernetes/hpa.yaml`
+    - Modify replica counts in `kubernetes/deployment.yaml`
+    - Adjust HPA settings in `kubernetes/hpa.yaml`
 
 3. **Storage**
-   - Configure PVC size in `kubernetes/pvc.yaml`
-   - Change storage class based on provider
+    - Configure PVC size in `kubernetes/pvc.yaml`
+    - Change storage class based on provider
 
 4. **Network Policies**
-   - Customize rules in `kubernetes/network-policy.yaml`
-   - Based on security requirements
+    - Customize rules in `kubernetes/network-policy.yaml`
+    - Based on security requirements
 
 ## 🚀 Quick Start Commands
 
 ### Docker Development
+
 ```bash
 # Start
 docker-compose -f docker-compose.dev.yml up
@@ -222,6 +223,7 @@ docker-compose -f docker-compose.dev.yml down
 ```
 
 ### Docker Production
+
 ```bash
 # Start
 docker-compose up -d
@@ -234,6 +236,7 @@ docker-compose down
 ```
 
 ### Kubernetes
+
 ```bash
 # Deploy everything
 kubectl apply -f kubernetes/
@@ -297,6 +300,7 @@ kubectl delete namespace epicheck
 ## 📈 Monitoring & Observability
 
 ### Metrics to Monitor
+
 - Pod CPU/Memory usage
 - Request rate and latency
 - Error rates
@@ -304,6 +308,7 @@ kubectl delete namespace epicheck
 - HPA scaling events
 
 ### Recommended Tools
+
 - Prometheus for metrics
 - Grafana for dashboards
 - ELK/Loki for logs
@@ -313,14 +318,18 @@ kubectl delete namespace epicheck
 ## 🐛 Common Issues & Solutions
 
 ### Issue: Pods not starting
+
 **Solution:** Check events and logs
+
 ```bash
 kubectl describe pod <pod-name> -n epicheck
 kubectl logs <pod-name> -n epicheck
 ```
 
 ### Issue: Cannot pull image
+
 **Solution:** Create image pull secret
+
 ```bash
 kubectl create secret docker-registry regcred \
   --docker-server=<server> \
@@ -330,14 +339,18 @@ kubectl create secret docker-registry regcred \
 ```
 
 ### Issue: Ingress not working
+
 **Solution:** Verify ingress controller and DNS
+
 ```bash
 kubectl get ingress -n epicheck
 kubectl describe ingress epicheck-ingress -n epicheck
 ```
 
 ### Issue: App can't connect to proxy
+
 **Solution:** Check service and network policy
+
 ```bash
 kubectl get svc -n epicheck
 kubectl describe svc epicheck-proxy -n epicheck
@@ -375,6 +388,7 @@ kubectl describe svc epicheck-proxy -n epicheck
 ## 🤝 Contributing
 
 When adding new features that require deployment changes:
+
 1. Update relevant Dockerfiles
 2. Update ConfigMap/Secrets if new env vars needed
 3. Update documentation
@@ -384,6 +398,7 @@ When adding new features that require deployment changes:
 ## 📞 Support
 
 For deployment issues:
+
 1. Check logs: `kubectl logs -f deployment/epicheck-app -n epicheck`
 2. Check events: `kubectl get events -n epicheck`
 3. Review documentation in this directory

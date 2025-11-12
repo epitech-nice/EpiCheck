@@ -299,6 +299,7 @@ Zero downtime achieved! 🎉
 ---
 
 This architecture ensures:
+
 - ✅ **Zero downtime deployments**
 - ✅ **Automatic rollbacks on failure**
 - ✅ **Secure secret management**

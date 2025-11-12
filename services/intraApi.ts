@@ -144,8 +144,11 @@ class IntraApiService {
 
             return response.data;
         } catch (error: any) {
-            console.error("Proxy request error:", error.response?.data || error.message);
-            
+            console.error(
+                "Proxy request error:",
+                error.response?.data || error.message,
+            );
+
             // Check if it's a proxied error from Intranet API
             if (error.response?.data?.error) {
                 throw new Error(error.response.data.error);
@@ -235,12 +238,17 @@ class IntraApiService {
         year: number,
     ): Promise<IIntraStudent[]> {
         try {
-            const data = await this.makeRequest("/user/filter/user", "GET", null, {
-                location,
-                year,
-                active: true,
-                count: 99999,
-            });
+            const data = await this.makeRequest(
+                "/user/filter/user",
+                "GET",
+                null,
+                {
+                    location,
+                    year,
+                    active: true,
+                    count: 99999,
+                },
+            );
             return data.items || data;
         } catch (error: any) {
             console.error(
@@ -271,11 +279,7 @@ class IntraApiService {
                 start: startDate,
                 end: endDate || startDate,
             });
-            console.log(
-                "Activities response:",
-                data?.length || 0,
-                "events",
-            );
+            console.log("Activities response:", data?.length || 0, "events");
             return data;
         } catch (error: any) {
             console.error(
@@ -300,7 +304,7 @@ class IntraApiService {
         try {
             const data = await this.makeRequest(
                 `/module/${scolaryear}/${codemodule}/${codeinstance}`,
-                "GET"
+                "GET",
             );
             return data;
         } catch (error: any) {
@@ -320,7 +324,7 @@ class IntraApiService {
         try {
             const data = await this.makeRequest(
                 `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${event.codeacti}/${event.codeevent}/registered`,
-                "GET"
+                "GET",
             );
             return data;
         } catch (error: any) {

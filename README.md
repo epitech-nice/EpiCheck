@@ -98,14 +98,16 @@ npm run android
 **Quick Start:**
 
 1. **Start the proxy server** (in one terminal):
-   ```bash
-   npm run proxy
-   ```
+
+    ```bash
+    npm run proxy
+    ```
 
 2. **Start the web app** (in another terminal):
-   ```bash
-   npm run web
-   ```
+
+    ```bash
+    npm run web
+    ```
 
 3. **Follow authentication steps** in the app to extract your Intranet cookie
 

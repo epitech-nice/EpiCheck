@@ -3,6 +3,7 @@
 ## ✅ Files Created
 
 ### GitHub Actions Workflows
+
 1. **`.github/workflows/deploy.yml`** - Main production deployment pipeline
 2. **`.github/workflows/deploy-staging.yml`** - Staging environment pipeline
 3. **`.github/workflows/README.md`** - Comprehensive documentation
@@ -12,12 +13,15 @@
 ## 🎯 What the Pipeline Does
 
 ### Production Pipeline (deploy.yml)
+
 Triggered on:
+
 - Push to `main` branch
 - Tag creation (`v*`)
 - Manual workflow dispatch
 
 Actions:
+
 1. ✅ Builds Docker images for app and proxy
 2. ✅ Pushes to GitHub Container Registry (ghcr.io)
 3. ✅ Deploys to Kubernetes cluster
@@ -27,11 +31,14 @@ Actions:
 7. ✅ Runs smoke tests
 
 ### Staging Pipeline (deploy-staging.yml)
+
 Triggered on:
+
 - Push to `develop` branch
 - Manual workflow dispatch
 
 Actions:
+
 1. ✅ Builds images with staging tags
 2. ✅ Deploys to staging namespace
 3. ✅ Runs integration tests
@@ -65,6 +72,7 @@ chmod +x .github/workflows/setup-secrets.sh
 ```
 
 The script will:
+
 - ✅ Verify GitHub CLI authentication
 - ✅ Detect your kubeconfig
 - ✅ Interactively collect all credentials
@@ -104,13 +112,13 @@ Edit `kubernetes/ingress.yaml`:
 
 ```yaml
 spec:
-  tls:
-  - hosts:
-    - your-domain.com  # ← Change this
-    - www.your-domain.com  # ← Change this
-    secretName: epicheck-tls
-  rules:
-  - host: your-domain.com  # ← Change this
+    tls:
+        - hosts:
+              - your-domain.com # ← Change this
+              - www.your-domain.com # ← Change this
+          secretName: epicheck-tls
+    rules:
+        - host: your-domain.com # ← Change this
 ```
 
 ### Step 5: Enable GitHub Container Registry
@@ -118,7 +126,7 @@ spec:
 1. Go to repository **Settings**
 2. Navigate to **Actions** → **General**
 3. Under **Workflow permissions**, select:
-   - ✅ **Read and write permissions**
+    - ✅ **Read and write permissions**
 4. Click **Save**
 
 ### Step 6: Trigger First Deployment
@@ -230,25 +238,26 @@ kubectl rollout undo deployment/epicheck-app --to-revision=2 -n epicheck
 5. Click **Run workflow** button
 
 Or via CLI:
+
 ```bash
 gh workflow run deploy.yml --ref main
 ```
 
 ## 🔐 Required Secrets
 
-| Secret | Description | How to Get |
-|--------|-------------|-----------|
-| `KUBE_CONFIG` | Base64 Kubernetes config | `cat ~/.kube/config \| base64` |
-| `EPITECH_USERNAME` | Epitech username | Your Epitech credentials |
-| `EPITECH_PASSWORD` | Epitech password | Your Epitech credentials |
-| `OFFICE365_CLIENT_ID` | OAuth Client ID | Azure Portal → App Registrations |
-| `OFFICE365_CLIENT_SECRET` | OAuth Secret | Azure Portal → App Registrations |
-| `OFFICE365_TENANT_ID` | Tenant ID | Azure Portal → Azure AD |
-| `AZURE_AD_CLIENT_ID` | Azure AD Client ID | Same as Office 365 or separate |
-| `AZURE_AD_CLIENT_SECRET` | Azure AD Secret | Same as Office 365 or separate |
-| `AZURE_AD_TENANT_ID` | Azure AD Tenant | Same as Office 365 or separate |
-| `API_KEY` | General API key | Generate: `openssl rand -hex 32` |
-| `SESSION_SECRET` | Session encryption | Generate: `openssl rand -hex 64` |
+| Secret                    | Description              | How to Get                       |
+| ------------------------- | ------------------------ | -------------------------------- |
+| `KUBE_CONFIG`             | Base64 Kubernetes config | `cat ~/.kube/config \| base64`   |
+| `EPITECH_USERNAME`        | Epitech username         | Your Epitech credentials         |
+| `EPITECH_PASSWORD`        | Epitech password         | Your Epitech credentials         |
+| `OFFICE365_CLIENT_ID`     | OAuth Client ID          | Azure Portal → App Registrations |
+| `OFFICE365_CLIENT_SECRET` | OAuth Secret             | Azure Portal → App Registrations |
+| `OFFICE365_TENANT_ID`     | Tenant ID                | Azure Portal → Azure AD          |
+| `AZURE_AD_CLIENT_ID`      | Azure AD Client ID       | Same as Office 365 or separate   |
+| `AZURE_AD_CLIENT_SECRET`  | Azure AD Secret          | Same as Office 365 or separate   |
+| `AZURE_AD_TENANT_ID`      | Azure AD Tenant          | Same as Office 365 or separate   |
+| `API_KEY`                 | General API key          | Generate: `openssl rand -hex 32` |
+| `SESSION_SECRET`          | Session encryption       | Generate: `openssl rand -hex 64` |
 
 ## 🐛 Troubleshooting
 
@@ -301,18 +310,20 @@ kubectl get events -n epicheck
 ### Multi-Environment Setup
 
 The pipeline supports:
+
 - **Production**: `main` branch → `epicheck` namespace
 - **Staging**: `develop` branch → `epicheck-staging` namespace
 
 ### Environment Protection
 
 Configure in GitHub:
+
 1. Settings → Environments
 2. Add "production" environment
 3. Configure protection rules:
-   - Required reviewers
-   - Wait timer
-   - Deployment branches
+    - Required reviewers
+    - Wait timer
+    - Deployment branches
 
 ### Notifications
 
@@ -322,8 +333,8 @@ Add to workflow:
 - name: Notify Slack
   uses: 8398a7/action-slack@v3
   with:
-    status: ${{ job.status }}
-    webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      status: ${{ job.status }}
+      webhook_url: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
 ### Automatic Rollback
@@ -333,10 +344,10 @@ Add to workflow:
 ```yaml
 - name: Health check
   run: |
-    sleep 60
-    kubectl run health-check --image=curlimages/curl --rm -i --restart=Never \
-      --namespace=epicheck -- curl -f http://epicheck-app:80/ || \
-    (kubectl rollout undo deployment/epicheck-app -n epicheck && exit 1)
+      sleep 60
+      kubectl run health-check --image=curlimages/curl --rm -i --restart=Never \
+        --namespace=epicheck -- curl -f http://epicheck-app:80/ || \
+      (kubectl rollout undo deployment/epicheck-app -n epicheck && exit 1)
 ```
 
 ## 📚 Documentation Links

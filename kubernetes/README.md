@@ -13,6 +13,7 @@ This directory contains Kubernetes manifests for deploying the EpiCheck applicat
 ## Architecture
 
 The deployment consists of:
+
 - **epicheck-app**: Main web application (Expo web build served by Nginx)
 - **epicheck-proxy**: Proxy server for API calls (Node.js)
 - **ConfigMap**: Environment configuration
@@ -37,6 +38,7 @@ docker push your-registry/epicheck-proxy:latest
 ### 2. Update Image References
 
 Edit `kubernetes/deployment.yaml` and replace:
+
 - `epicheck:latest` with `your-registry/epicheck:latest`
 - `epicheck-proxy:latest` with `your-registry/epicheck-proxy:latest`
 
@@ -115,6 +117,7 @@ kubectl apply -f kubernetes/
 ### Environment Variables
 
 Edit `kubernetes/configmap.yaml` to configure:
+
 - API endpoints
 - Feature flags
 - Application settings
@@ -122,6 +125,7 @@ Edit `kubernetes/configmap.yaml` to configure:
 ### Secrets
 
 Edit `kubernetes/secrets.yaml` to set:
+
 - Epitech API credentials
 - Office 365 OAuth credentials
 - API keys
@@ -133,17 +137,18 @@ Adjust resources in `kubernetes/deployment.yaml`:
 
 ```yaml
 resources:
-  requests:
-    memory: "256Mi"
-    cpu: "250m"
-  limits:
-    memory: "512Mi"
-    cpu: "500m"
+    requests:
+        memory: "256Mi"
+        cpu: "250m"
+    limits:
+        memory: "512Mi"
+        cpu: "500m"
 ```
 
 ### Scaling
 
 Modify `kubernetes/hpa.yaml` to adjust auto-scaling:
+
 - `minReplicas`: Minimum number of pods
 - `maxReplicas`: Maximum number of pods
 - CPU/Memory thresholds

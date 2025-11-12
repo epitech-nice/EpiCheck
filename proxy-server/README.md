@@ -24,11 +24,13 @@ Edit `.env` if needed (default settings work for local development).
 ### 3. Start the Server
 
 **Development mode (with auto-reload):**
+
 ```bash
 npm run dev
 ```
 
 **Production mode:**
+
 ```bash
 npm start
 ```
@@ -38,30 +40,34 @@ The server will start on `http://localhost:3001`
 ## 📡 API Endpoints
 
 ### Health Check
+
 ```
 GET /health
 ```
 
 **Response:**
+
 ```json
 {
-  "status": "ok",
-  "timestamp": "2025-11-12T10:30:00.000Z",
-  "service": "EpiCheck CORS Proxy"
+    "status": "ok",
+    "timestamp": "2025-11-12T10:30:00.000Z",
+    "service": "EpiCheck CORS Proxy"
 }
 ```
 
 ### Proxy Endpoint
+
 ```
 POST /api/intra-proxy
 ```
 
 **Request Body:**
+
 ```json
 {
-  "endpoint": "/user/?format=json",
-  "cookie": "your-intranet-cookie-value",
-  "method": "GET"
+    "endpoint": "/user/?format=json",
+    "cookie": "your-intranet-cookie-value",
+    "method": "GET"
 }
 ```
 
@@ -69,6 +75,7 @@ POST /api/intra-proxy
 Returns the data from Epitech Intranet API
 
 **Example using curl:**
+
 ```bash
 curl -X POST http://localhost:3001/api/intra-proxy \
   -H "Content-Type: application/json" \
@@ -96,10 +103,10 @@ curl -X POST http://localhost:3001/api/intra-proxy \
 3. Create app: `heroku create epicheck-proxy`
 4. Deploy: `git push heroku main`
 5. Set environment variables:
-   ```bash
-   heroku config:set ALLOWED_ORIGINS=https://your-web-app.com
-   heroku config:set NODE_ENV=production
-   ```
+    ```bash
+    heroku config:set ALLOWED_ORIGINS=https://your-web-app.com
+    heroku config:set NODE_ENV=production
+    ```
 
 ### Option 2: Vercel (Serverless)
 
@@ -127,11 +134,11 @@ curl -X POST http://localhost:3001/api/intra-proxy \
 
 ### Environment Variables
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `PORT` | Server port | `3001` | No |
-| `ALLOWED_ORIGINS` | Comma-separated list of allowed origins | `*` | No |
-| `NODE_ENV` | Environment (development/production) | `development` | No |
+| Variable          | Description                             | Default       | Required |
+| ----------------- | --------------------------------------- | ------------- | -------- |
+| `PORT`            | Server port                             | `3001`        | No       |
+| `ALLOWED_ORIGINS` | Comma-separated list of allowed origins | `*`           | No       |
+| `NODE_ENV`        | Environment (development/production)    | `development` | No       |
 
 ### CORS Configuration
 
@@ -143,6 +150,7 @@ ALLOWED_ORIGINS=https://your-app.com,https://www.your-app.com
 ```
 
 For local development:
+
 ```bash
 ALLOWED_ORIGINS=http://localhost:8081,http://localhost:19006
 ```
@@ -152,6 +160,7 @@ ALLOWED_ORIGINS=http://localhost:8081,http://localhost:19006
 ### Logs
 
 The server logs all requests:
+
 ```
 [2025-11-12T10:30:00.000Z] GET /user/?format=json | Cookie: abc123...
 ```
@@ -159,6 +168,7 @@ The server logs all requests:
 ### Health Check
 
 Monitor server health:
+
 ```bash
 curl http://localhost:3001/health
 ```
@@ -168,12 +178,14 @@ curl http://localhost:3001/health
 ### Error: EADDRINUSE
 
 Port 3001 is already in use. Either:
+
 - Change the port in `.env`: `PORT=3002`
 - Kill the process using port 3001: `lsof -ti:3001 | xargs kill`
 
 ### Error: Cannot connect to Intranet
 
 Check if:
+
 - Intranet is accessible: `curl https://intra.epitech.eu`
 - Cookie is valid
 - Network allows outgoing HTTPS requests
@@ -181,6 +193,7 @@ Check if:
 ### CORS errors persist
 
 Make sure:
+
 - Proxy server is running
 - React Native app is configured to use proxy URL
 - `ALLOWED_ORIGINS` includes your web app domain

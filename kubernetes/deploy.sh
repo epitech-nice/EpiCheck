@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 NAMESPACE="epicheck"
-DOCKER_REGISTRY="${DOCKER_REGISTRY:-your-registry}"
+DOCKER_REGISTRY="${DOCKER_REGISTRY:-ghcr.io/epitech-nice}"
 IMAGE_TAG="${IMAGE_TAG:-latest}"
 
 echo -e "${GREEN}========================================${NC}"
@@ -56,17 +56,43 @@ read -p "Do you want to build and push Docker images? (y/n) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${GREEN}Building and pushing Docker images...${NC}"
+    echo -e "${YELLOW}Registry: ${DOCKER_REGISTRY}${NC}"
+    echo -e "${YELLOW}Tag: ${IMAGE_TAG}${NC}"
+    echo ""
     
+    # Check if logged in to registry
+    if [[ $DOCKER_REGISTRY == ghcr.io* ]]; then
+        echo -e "${YELLOW}Note: Make sure you're logged in to GitHub Container Registry${NC}"
+        echo -e "${YELLOW}Run: echo \$GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin${NC}"
+        echo ""
+        read -p "Are you logged in? (y/n) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo -e "${RED}Please login first and run the script again${NC}"
+            exit 1
+        fi
+    fi
+
     # Build main app
     echo -e "${YELLOW}Building epicheck:${IMAGE_TAG}${NC}"
     docker build -t ${DOCKER_REGISTRY}/epicheck:${IMAGE_TAG} .
-    docker push ${DOCKER_REGISTRY}/epicheck:${IMAGE_TAG}
     
+    echo -e "${YELLOW}Pushing epicheck:${IMAGE_TAG}${NC}"
+    docker push ${DOCKER_REGISTRY}/epicheck:${IMAGE_TAG} || {
+        echo -e "${RED}Failed to push image. Check your registry credentials.${NC}"
+        exit 1
+    }
+
     # Build proxy
     echo -e "${YELLOW}Building epicheck-proxy:${IMAGE_TAG}${NC}"
     docker build -t ${DOCKER_REGISTRY}/epicheck-proxy:${IMAGE_TAG} ./proxy-server
-    docker push ${DOCKER_REGISTRY}/epicheck-proxy:${IMAGE_TAG}
     
+    echo -e "${YELLOW}Pushing epicheck-proxy:${IMAGE_TAG}${NC}"
+    docker push ${DOCKER_REGISTRY}/epicheck-proxy:${IMAGE_TAG} || {
+        echo -e "${RED}Failed to push proxy image. Check your registry credentials.${NC}"
+        exit 1
+    }
+
     echo -e "${GREEN}Images built and pushed successfully${NC}"
 fi
 

@@ -14,8 +14,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_APP: ${{ github.repository }}
-  IMAGE_NAME_PROXY: ${{ github.repository }}-proxy
+  IMAGE_NAME_APP: ${{ github.repository_owner }}/epicheck
+  IMAGE_NAME_PROXY: ${{ github.repository_owner }}/epicheck-proxy
 
 jobs:
   build-and-push:

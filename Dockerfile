@@ -19,12 +19,15 @@ COPY package*.json ./
 # Install all dependencies (including dev dependencies for build)
 RUN npm ci --legacy-peer-deps
 
+# Build arguments for environment variables (must be before COPY)
+ARG EXPO_PUBLIC_PROXY_URL=/api/intra-proxy
+ENV EXPO_PUBLIC_PROXY_URL=${EXPO_PUBLIC_PROXY_URL}
+
+# Verify environment variable is set
+RUN echo "Building with EXPO_PUBLIC_PROXY_URL=${EXPO_PUBLIC_PROXY_URL}"
+
 # Copy source code
 COPY . .
-
-# Build arguments for environment variables
-ARG EXPO_PUBLIC_PROXY_URL=http://localhost:3001/api/intra-proxy
-ENV EXPO_PUBLIC_PROXY_URL=${EXPO_PUBLIC_PROXY_URL}
 
 # Build the web version of the app for production using Metro
 RUN npx expo export --platform web
@@ -47,4 +50,3 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
-# Trigger rebuild with build-args

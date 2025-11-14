@@ -137,7 +137,20 @@ jobs:
                   ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
               run: |
                   export PATH=$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
-                  ./gradlew assembleRelease --no-daemon --stacktrace --no-configuration-cache
+                  ./gradlew assembleRelease --no-daemon --stacktrace --no-configuration-cache --info 2>&1 | tee build.log
+
+                  # Check if build succeeded
+                  if [ ${PIPESTATUS[0]} -ne 0 ]; then
+                    echo "❌ Build failed. Showing last 200 lines of output:"
+                    tail -200 build.log
+                    echo ""
+                    echo "❌ Searching for error messages:"
+                    grep -i "error" build.log | tail -20 || echo "No specific errors found"
+                    echo ""
+                    echo "❌ Searching for failures:"
+                    grep -i "fail" build.log | tail -20 || echo "No specific failures found"
+                    exit 1
+                  fi
 
             - name: Upload APK Artifact
               uses: actions/upload-artifact@v4

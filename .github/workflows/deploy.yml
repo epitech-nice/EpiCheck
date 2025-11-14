@@ -92,10 +92,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache,mode=max
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache-${{ github.sha }}
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache-${{ github.sha }},mode=max
           build-args: |
             EXPO_PUBLIC_PROXY_URL=/api/intra-proxy
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_COMMIT=${{ github.sha }}
 
       - name: Extract metadata for proxy
         id: meta-proxy

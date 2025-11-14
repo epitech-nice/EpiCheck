@@ -21,10 +21,15 @@ RUN npm ci --legacy-peer-deps
 
 # Build arguments for environment variables (must be before COPY)
 ARG EXPO_PUBLIC_PROXY_URL=/api/intra-proxy
+ARG BUILD_DATE
+ARG GIT_COMMIT
+
 ENV EXPO_PUBLIC_PROXY_URL=${EXPO_PUBLIC_PROXY_URL}
 
 # Verify environment variable is set
-RUN echo "Building with EXPO_PUBLIC_PROXY_URL=${EXPO_PUBLIC_PROXY_URL}"
+RUN echo "Building with EXPO_PUBLIC_PROXY_URL=${EXPO_PUBLIC_PROXY_URL}" && \
+    echo "Build date: ${BUILD_DATE}" && \
+    echo "Git commit: ${GIT_COMMIT}"
 
 # Copy source code
 COPY . .

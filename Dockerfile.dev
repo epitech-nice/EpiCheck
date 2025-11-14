@@ -22,8 +22,11 @@ RUN node --version && npm --version
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies with legacy peer deps to handle complex dependencies
 RUN npm install --legacy-peer-deps
+
+# Install missing peer dependencies explicitly
+RUN npm install react-native-worklets --legacy-peer-deps || true
 
 # Install Expo CLI globally
 RUN npm install -g expo-cli @expo/ngrok

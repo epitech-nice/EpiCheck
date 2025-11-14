@@ -1,21 +1,52 @@
+#
+# File Name: deploy.yml
+# Author: Alexandre Kévin DE FREITAS MARTINS
+# Creation Date: 14/11/2025
+# Description: This is the deploy.yml
+# Copyright (c) 2025 Epitech
+# Version: 1.0.0
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
 name: Build and Deploy to Kubernetes
 
 on:
   push:
     branches:
       - main
-      - develop
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 env:
+  # GitHub Configuration
+  GITHUB_USERNAME: ${{ github.repository_owner }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Container Registry Configuration
   REGISTRY: ghcr.io
   IMAGE_NAME_APP: ${{ github.repository_owner }}/epicheck
   IMAGE_NAME_PROXY: ${{ github.repository_owner }}/epicheck-proxy
+
 
 jobs:
   build-and-push:
@@ -36,8 +67,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ env.GITHUB_USERNAME }}
+          password: ${{ env.GITHUB_TOKEN }}
 
       - name: Extract metadata for app
         id: meta
@@ -57,6 +88,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

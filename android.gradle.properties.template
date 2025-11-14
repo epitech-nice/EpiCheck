@@ -27,8 +27,7 @@ android.enableJetifier=true
 android.enableR8=true
 android.enableR8.fullMode=true
 
-# Disable unnecessary features to speed up builds
-android.enableBuildCache=true
+# Enable D8 desugaring for Java 8+ language features
 android.enableD8.desugaring=true
 
 # Kotlin optimizations (if using Kotlin)

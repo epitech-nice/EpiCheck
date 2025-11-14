@@ -6,13 +6,15 @@
 org.gradle.caching=true
 
 # Enable configuration cache (speeds up configuration phase)
-org.gradle.configuration-cache=true
+# DISABLED: Causes compatibility issues with Expo/React Native builds
+# org.gradle.configuration-cache=true
 
 # Enable parallel builds
 org.gradle.parallel=true
 
 # Configure JVM memory for better performance
-org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError
+# Reduced for CI compatibility (GitHub Actions has ~7GB available)
+org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
 
 # Enable Gradle daemon for faster builds
 org.gradle.daemon=true

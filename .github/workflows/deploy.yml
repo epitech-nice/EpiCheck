@@ -178,30 +178,52 @@ jobs:
         run: |
           kubectl apply -f kubernetes/configmap.yaml
 
-      - name: Update deployment image tags
+      - name: Check and clean old deployments
         run: |
-          # Update app image
-          kubectl set image deployment/epicheck-app \
-            epicheck=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:${{ needs.build-and-push.outputs.image-tag }} \
-            --namespace epicheck --record || \
-          kubectl apply -f kubernetes/deployment.yaml
-
-          # Update proxy image
-          kubectl set image deployment/epicheck-proxy \
-            proxy=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PROXY }}:${{ needs.build-and-push.outputs.image-tag }} \
-            --namespace epicheck --record || \
-          kubectl apply -f kubernetes/deployment.yaml
+          # Check if deployments exist and have wrong images
+          if kubectl get deployment epicheck-app -n epicheck 2>/dev/null; then
+            CURRENT_IMAGE=$(kubectl get deployment epicheck-app -n epicheck -o jsonpath='{.spec.template.spec.containers[0].image}')
+            if [[ "$CURRENT_IMAGE" != ghcr.io/* ]]; then
+              echo "⚠️ Found old deployment with incorrect image: $CURRENT_IMAGE"
+              echo "🔄 Deleting old deployment to allow clean recreation..."
+              kubectl delete deployment epicheck-app epicheck-proxy -n epicheck --ignore-not-found=true
+              sleep 5
+            fi
+          fi
 
       - name: Apply Kubernetes manifests
         run: |
+          kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
           kubectl apply -f kubernetes/ingress.yaml
           kubectl apply -f kubernetes/hpa.yaml
 
+      - name: Update deployment image tags
+        run: |
+          # Update app image to specific version
+          kubectl set image deployment/epicheck-app \
+            epicheck=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:${{ needs.build-and-push.outputs.image-tag }} \
+            --namespace epicheck --record
+
+          # Update proxy image to specific version
+          kubectl set image deployment/epicheck-proxy \
+            proxy=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PROXY }}:${{ needs.build-and-push.outputs.image-tag }} \
+            --namespace epicheck --record
+
       - name: Wait for rollout to complete
         run: |
-          kubectl rollout status deployment/epicheck-app -n epicheck --timeout=10m
-          kubectl rollout status deployment/epicheck-proxy -n epicheck --timeout=10m
+          kubectl rollout status deployment/epicheck-app -n epicheck --timeout=10m || (
+            echo "⚠️ Rollout failed or timed out. Checking pod status..."
+            kubectl get pods -n epicheck -l app=epicheck,component=web
+            kubectl describe pods -n epicheck -l app=epicheck,component=web | tail -50
+            exit 1
+          )
+          kubectl rollout status deployment/epicheck-proxy -n epicheck --timeout=10m || (
+            echo "⚠️ Rollout failed or timed out. Checking pod status..."
+            kubectl get pods -n epicheck -l app=epicheck,component=proxy
+            kubectl describe pods -n epicheck -l app=epicheck,component=proxy | tail -50
+            exit 1
+          )
 
       - name: Verify deployment
         run: |

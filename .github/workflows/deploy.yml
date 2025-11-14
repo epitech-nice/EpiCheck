@@ -92,9 +92,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: |
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache-${{ github.sha }}
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache-${{ github.sha }}
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache-${{ github.sha }},mode=max
           build-args: |
             EXPO_PUBLIC_PROXY_URL=/api/intra-proxy

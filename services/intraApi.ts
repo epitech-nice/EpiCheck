@@ -119,8 +119,10 @@ class IntraApiService {
     ): Promise<any> {
         const cookie = await intraAuth.getIntraCookie();
 
+        console.log("🔑 Cookie retrieved:", cookie ? `${cookie.substring(0, 20)}... (${cookie.length} chars)` : "❌ NO COOKIE");
+
         if (!cookie) {
-            throw new Error("No authentication cookie found. Please log in.");
+            throw new Error("No authentication cookie found. Please log in through the WebView authentication.");
         }
 
         // Build full endpoint with query params
@@ -218,6 +220,14 @@ class IntraApiService {
                 error.response?.data || error.message,
             );
 
+            // Check for specific error responses
+            if (error.response?.status === 503) {
+                await intraAuth.clearIntraCookie();
+                throw new Error(
+                    "Session not authenticated. Please log in again through the WebView.",
+                );
+            }
+
             // If 401/403, user needs to re-authenticate
             if (
                 error.response?.status === 401 ||
@@ -225,6 +235,17 @@ class IntraApiService {
             ) {
                 await intraAuth.clearIntraCookie();
                 throw new Error("Session expired. Please log in again.");
+            }
+
+            // Check if it's the anti-DDoS page
+            if (
+                error.message &&
+                error.message.includes("Anti-DDoS Flood Protection")
+            ) {
+                await intraAuth.clearIntraCookie();
+                throw new Error(
+                    "Authentication required. Please complete the login process.",
+                );
             }
 
             throw new Error("Failed to fetch current user information");

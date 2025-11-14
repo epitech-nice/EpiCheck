@@ -35,7 +35,9 @@ import type { IPresenceUpdate } from "../types/IPresenceUpdate";
 import type { IIntraModuleInfo } from "../types/IIntraModuleInfo";
 
 const INTRA_BASE_URL = "https://intra.epitech.eu";
-const PROXY_BASE_URL = "http://localhost:3001/api/intra-proxy"; // For web platform
+const PROXY_BASE_URL =
+    process.env.EXPO_PUBLIC_PROXY_URL ||
+    "http://localhost:3001/api/intra-proxy"; // For web platform
 
 class IntraApiService {
     private api: AxiosInstance;

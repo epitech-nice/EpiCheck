@@ -3,7 +3,10 @@
 
 FROM node:20-alpine
 
-# Install dependencies for Expo and React Native
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies for Expo and React Native
 RUN apk add --no-cache \
     git \
     bash \
@@ -13,14 +16,14 @@ RUN apk add --no-cache \
     make \
     g++
 
-# Set working directory
-WORKDIR /app
+# Verify npm is available
+RUN node --version && npm --version
 
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Install Expo CLI globally
 RUN npm install -g expo-cli @expo/ngrok

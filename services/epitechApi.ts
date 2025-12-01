@@ -343,17 +343,7 @@ class EpitechApiService {
                 dateStr,
             );
 
-            // Filter to only activities where user has rights
-            return activities.filter((event) => {
-                return (
-                    Array.isArray(event.rights) &&
-                    event.rights !== null &&
-                    (event.rights.indexOf("prof_inst") > -1 ||
-                        event.rights.indexOf("assistant") > -1) &&
-                    event.type_code !== "rdv" &&
-                    event.is_rdv !== "1"
-                );
-            });
+            return activities;
         } catch (error: any) {
             console.error(
                 "Get today activities error:",

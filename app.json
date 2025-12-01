@@ -8,8 +8,12 @@
         "userInterfaceStyle": "automatic",
         "splash": {
             "image": "./assets/splash-icon.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
+            "resizeMode": "native",
+            "backgroundColor": "#232323",
+            "dark": {
+                "image": "./assets/splash-icon.png",
+                "backgroundColor": "#000000"
+            }
         },
         "ios": {
             "supportsTablet": true,
@@ -26,7 +30,11 @@
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
+                "backgroundColor": "#ffffff",
+                "dark": {
+                    "foregroundImage": "./assets/adaptive-icon.png",
+                    "backgroundColor": "#000000"
+                }
             },
             "userInterfaceStyle": "automatic",
             "package": "com.epicheck.app",
@@ -55,7 +63,19 @@
                     "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes."
                 }
             ],
-            "expo-audio"
+            "expo-audio",
+            [
+                "expo-font",
+                {
+                    "fonts": [
+                        "./assets/fonts/Anton-Regular.ttf",
+                        "./assets/fonts/IBMPlexSans-Regular.ttf",
+                        "./assets/fonts/IBMPlexSans-Bold.ttf",
+                        "./assets/fonts/IBMPlexSans-SemiBold.ttf",
+                        "./assets/fonts/IBMPlexSans-Italic.ttf"
+                    ]
+                }
+            ]
         ],
         "scheme": "epicheck",
         "extra": {

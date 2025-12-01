@@ -4,6 +4,9 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
 
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # Install build dependencies
 RUN apk add --no-cache \
     git \
@@ -14,10 +17,10 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci --legacy-peer-deps
+RUN pnpm install --frozen-lockfile
 
 # Build arguments for environment variables (must be before COPY)
 ARG EXPO_PUBLIC_PROXY_URL=/api/intra-proxy
@@ -39,6 +42,9 @@ RUN npx expo export --platform web
 
 # Stage 2: Production
 FROM nginx:alpine
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html

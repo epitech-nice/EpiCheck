@@ -14,6 +14,10 @@ module.exports = {
     presets: [require("nativewind/preset")],
     theme: {
         extend: {
+            fontFamily: {
+                sans: ["IBMPlexSans"],
+                title: ["Anton"],
+            },
             colors: {
                 // Legacy Epitech colors (kept for backward compatibility)
                 epitech: {
@@ -28,7 +32,7 @@ module.exports = {
                 primary: {
                     DEFAULT: "rgb(var(--color-primary) / <alpha-value>)",
                     dark: "rgb(var(--color-primary-dark) / <alpha-value>)",
-                    light: "rgb(var(--color-primary-light) / <alpha-value>)",
+                    light: "rgb(var(--color-primary-dark) / <alpha-value>)",
                 },
                 background: {
                     DEFAULT: "rgb(var(--color-background) / <alpha-value>)",

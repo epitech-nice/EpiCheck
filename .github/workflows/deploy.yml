@@ -1,29 +1,58 @@
+#
+# File Name: deploy.yml
+# Author: Alexandre Kévin DE FREITAS MARTINS
+# Creation Date: 14/11/2025
+# Description: This is the deploy.yml
+# Copyright (c) 2025 Epitech
+# Version: 1.0.0
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+
 name: Build and Deploy to Kubernetes
 
 on:
   push:
     branches:
       - main
-      - develop
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 env:
+  # GitHub Configuration
+  GITHUB_USERNAME: ${{ github.repository_owner }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Container Registry Configuration
   REGISTRY: ghcr.io
   IMAGE_NAME_APP: ${{ github.repository_owner }}/epicheck
   IMAGE_NAME_PROXY: ${{ github.repository_owner }}/epicheck-proxy
 
+
 jobs:
   build-and-push:
     name: Build and Push Docker Images
+    permissions: write-all
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     outputs:
       image-tag: ${{ steps.meta.outputs.version }}
 
@@ -38,8 +67,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ env.GITHUB_USERNAME }}
+          password: ${{ env.GITHUB_TOKEN }}
 
       - name: Extract metadata for app
         id: meta
@@ -59,11 +88,15 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:buildcache,mode=max
+          no-cache: true
+          build-args: |
+            EXPO_PUBLIC_PROXY_URL=/api/intra-proxy
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_COMMIT=${{ github.sha }}
 
       - name: Extract metadata for proxy
         id: meta-proxy
@@ -119,6 +152,15 @@ jobs:
         run: |
           kubectl create namespace epicheck --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Create image pull secret
+        run: |
+          kubectl create secret docker-registry ghcr-secret \
+            --docker-server=${{ env.REGISTRY }} \
+            --docker-username=${{ env.GITHUB_USERNAME }} \
+            --docker-password=${{ env.GITHUB_TOKEN }} \
+            --namespace epicheck \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Create/Update Secrets
         run: |
           kubectl create secret generic epicheck-secrets \
@@ -139,30 +181,52 @@ jobs:
         run: |
           kubectl apply -f kubernetes/configmap.yaml
 
-      - name: Update deployment image tags
+      - name: Check and clean old deployments
         run: |
-          # Update app image
-          kubectl set image deployment/epicheck-app \
-            epicheck=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:${{ needs.build-and-push.outputs.image-tag }} \
-            --namespace epicheck --record || \
-          kubectl apply -f kubernetes/deployment.yaml
-
-          # Update proxy image
-          kubectl set image deployment/epicheck-proxy \
-            proxy=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PROXY }}:${{ needs.build-and-push.outputs.image-tag }} \
-            --namespace epicheck --record || \
-          kubectl apply -f kubernetes/deployment.yaml
+          # Check if deployments exist and have wrong images
+          if kubectl get deployment epicheck-app -n epicheck 2>/dev/null; then
+            CURRENT_IMAGE=$(kubectl get deployment epicheck-app -n epicheck -o jsonpath='{.spec.template.spec.containers[0].image}')
+            if [[ "$CURRENT_IMAGE" != ghcr.io/* ]]; then
+              echo "⚠️ Found old deployment with incorrect image: $CURRENT_IMAGE"
+              echo "🔄 Deleting old deployment to allow clean recreation..."
+              kubectl delete deployment epicheck-app epicheck-proxy -n epicheck --ignore-not-found=true
+              sleep 5
+            fi
+          fi
 
       - name: Apply Kubernetes manifests
         run: |
+          kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
           kubectl apply -f kubernetes/ingress.yaml
           kubectl apply -f kubernetes/hpa.yaml
 
+      - name: Update deployment image tags
+        run: |
+          # Update app image to specific version
+          kubectl set image deployment/epicheck-app \
+            epicheck=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}:${{ needs.build-and-push.outputs.image-tag }} \
+            --namespace epicheck --record
+
+          # Update proxy image to specific version
+          kubectl set image deployment/epicheck-proxy \
+            proxy=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PROXY }}:${{ needs.build-and-push.outputs.image-tag }} \
+            --namespace epicheck --record
+
       - name: Wait for rollout to complete
         run: |
-          kubectl rollout status deployment/epicheck-app -n epicheck --timeout=5m
-          kubectl rollout status deployment/epicheck-proxy -n epicheck --timeout=5m
+          kubectl rollout status deployment/epicheck-app -n epicheck --timeout=10m || (
+            echo "⚠️ Rollout failed or timed out. Checking pod status..."
+            kubectl get pods -n epicheck -l app=epicheck,component=web
+            kubectl describe pods -n epicheck -l app=epicheck,component=web | tail -50
+            exit 1
+          )
+          kubectl rollout status deployment/epicheck-proxy -n epicheck --timeout=10m || (
+            echo "⚠️ Rollout failed or timed out. Checking pod status..."
+            kubectl get pods -n epicheck -l app=epicheck,component=proxy
+            kubectl describe pods -n epicheck -l app=epicheck,component=proxy | tail -50
+            exit 1
+          )
 
       - name: Verify deployment
         run: |

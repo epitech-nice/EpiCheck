@@ -1,11 +1,11 @@
-version: '3.8'
-
 services:
   # Main application (web build)
   app:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        EXPO_PUBLIC_PROXY_URL: http://localhost:3001/api/intra-proxy
     container_name: epicheck-app
     ports:
       - "80:80"

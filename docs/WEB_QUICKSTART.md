@@ -19,6 +19,7 @@ npm start
 ```
 
 You should see:
+
 ```
 🚀 EpiCheck CORS Proxy Server running on port 3001
 📍 Health check: http://localhost:3001/health
@@ -60,6 +61,7 @@ The web app will open at `http://localhost:8081`
 ## ✅ Verification
 
 After authentication:
+
 - You should see a success message
 - The app will load your user profile
 - All API calls go through the proxy server (check console logs)
@@ -71,6 +73,7 @@ After authentication:
 **Problem:** Proxy server is not running
 
 **Solution:**
+
 ```bash
 cd proxy-server
 npm start
@@ -81,6 +84,7 @@ npm start
 **Problem:** Port 3001 is occupied
 
 **Solution:** Kill the process or change port:
+
 ```bash
 # Option 1: Kill existing process
 lsof -ti:3001 | xargs kill
@@ -90,6 +94,7 @@ PORT=3002
 ```
 
 Then update `PROXY_BASE_URL` in `services/intraApi.ts`:
+
 ```typescript
 const PROXY_BASE_URL = "http://localhost:3002/api/intra-proxy";
 ```
@@ -97,29 +102,32 @@ const PROXY_BASE_URL = "http://localhost:3002/api/intra-proxy";
 ### API calls still fail
 
 1. **Check proxy server is running:**
-   ```bash
-   curl http://localhost:3001/health
-   ```
-   Should return: `{"status":"ok",...}`
+
+    ```bash
+    curl http://localhost:3001/health
+    ```
+
+    Should return: `{"status":"ok",...}`
 
 2. **Check browser console** for error messages
 
 3. **Verify cookie is saved:**
-   - Open DevTools → Application → Local Storage
-   - Look for `intra_cookie` key
+    - Open DevTools → Application → Local Storage
+    - Look for `intra_cookie` key
 
 4. **Test proxy directly:**
-   ```bash
-   curl -X POST http://localhost:3001/api/intra-proxy \
-     -H "Content-Type: application/json" \
-     -d '{"endpoint":"/user/?format=json","cookie":"YOUR_COOKIE","method":"GET"}'
-   ```
+    ```bash
+    curl -X POST http://localhost:3001/api/intra-proxy \
+      -H "Content-Type: application/json" \
+      -d '{"endpoint":"/user/?format=json","cookie":"YOUR_COOKIE","method":"GET"}'
+    ```
 
 ## 📊 Monitoring
 
 ### Check Proxy Logs
 
 The terminal running the proxy server shows all requests:
+
 ```
 [2025-11-12T10:30:00.000Z] GET /user/?format=json | Cookie: abc123...
 [2025-11-12T10:30:15.000Z] GET /planning/load?location=FR/PAR&... | Cookie: abc123...
@@ -128,6 +136,7 @@ The terminal running the proxy server shows all requests:
 ### Check API Requests
 
 Open browser DevTools → Network tab:
+
 - Filter by `intra-proxy` to see all API calls
 - All requests go to `localhost:3001` instead of `intra.epitech.eu`
 
@@ -166,6 +175,7 @@ Open browser DevTools → Network tab:
 - **HTTPS:** Not used locally (development only)
 
 ⚠️ **For production deployment:**
+
 - Deploy proxy server to a secure hosting service
 - Use HTTPS for all connections
 - Implement proper cookie encryption
@@ -187,6 +197,7 @@ Open browser DevTools → Network tab:
 ## 🚀 Production Deployment
 
 For deploying to production, see:
+
 - [proxy-server/README.md](../proxy-server/README.md#-deployment) for deployment options
 - Update `PROXY_BASE_URL` in `intraApi.ts` to your deployed proxy URL
 - Configure `ALLOWED_ORIGINS` in proxy server to your web app domain

@@ -35,7 +35,9 @@ import type { IPresenceUpdate } from "../types/IPresenceUpdate";
 import type { IIntraModuleInfo } from "../types/IIntraModuleInfo";
 
 const INTRA_BASE_URL = "https://intra.epitech.eu";
-const PROXY_BASE_URL = "http://localhost:3001/api/intra-proxy"; // For web platform
+const PROXY_BASE_URL =
+    process.env.EXPO_PUBLIC_PROXY_URL ||
+    "http://localhost:3001/api/intra-proxy"; // For web platform
 
 class IntraApiService {
     private api: AxiosInstance;
@@ -118,7 +120,9 @@ class IntraApiService {
         const cookie = await intraAuth.getIntraCookie();
 
         if (!cookie) {
-            throw new Error("No authentication cookie found. Please log in.");
+            throw new Error(
+                "No authentication cookie found. Please log in through the WebView authentication.",
+            );
         }
 
         // Build full endpoint with query params
@@ -144,8 +148,11 @@ class IntraApiService {
 
             return response.data;
         } catch (error: any) {
-            console.error("Proxy request error:", error.response?.data || error.message);
-            
+            console.error(
+                "Proxy request error:",
+                error.response?.data || error.message,
+            );
+
             // Check if it's a proxied error from Intranet API
             if (error.response?.data?.error) {
                 throw new Error(error.response.data.error);
@@ -213,6 +220,14 @@ class IntraApiService {
                 error.response?.data || error.message,
             );
 
+            // Check for specific error responses
+            if (error.response?.status === 503) {
+                await intraAuth.clearIntraCookie();
+                throw new Error(
+                    "Session not authenticated. Please log in again through the WebView.",
+                );
+            }
+
             // If 401/403, user needs to re-authenticate
             if (
                 error.response?.status === 401 ||
@@ -220,6 +235,17 @@ class IntraApiService {
             ) {
                 await intraAuth.clearIntraCookie();
                 throw new Error("Session expired. Please log in again.");
+            }
+
+            // Check if it's the anti-DDoS page
+            if (
+                error.message &&
+                error.message.includes("Anti-DDoS Flood Protection")
+            ) {
+                await intraAuth.clearIntraCookie();
+                throw new Error(
+                    "Authentication required. Please complete the login process.",
+                );
             }
 
             throw new Error("Failed to fetch current user information");
@@ -235,12 +261,17 @@ class IntraApiService {
         year: number,
     ): Promise<IIntraStudent[]> {
         try {
-            const data = await this.makeRequest("/user/filter/user", "GET", null, {
-                location,
-                year,
-                active: true,
-                count: 99999,
-            });
+            const data = await this.makeRequest(
+                "/user/filter/user",
+                "GET",
+                null,
+                {
+                    location,
+                    year,
+                    active: true,
+                    count: 99999,
+                },
+            );
             return data.items || data;
         } catch (error: any) {
             console.error(
@@ -271,11 +302,7 @@ class IntraApiService {
                 start: startDate,
                 end: endDate || startDate,
             });
-            console.log(
-                "Activities response:",
-                data?.length || 0,
-                "events",
-            );
+            console.log("Activities response:", data?.length || 0, "events");
             return data;
         } catch (error: any) {
             console.error(
@@ -300,7 +327,7 @@ class IntraApiService {
         try {
             const data = await this.makeRequest(
                 `/module/${scolaryear}/${codemodule}/${codeinstance}`,
-                "GET"
+                "GET",
             );
             return data;
         } catch (error: any) {
@@ -320,7 +347,7 @@ class IntraApiService {
         try {
             const data = await this.makeRequest(
                 `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${event.codeacti}/${event.codeevent}/registered`,
-                "GET"
+                "GET",
             );
             return data;
         } catch (error: any) {

@@ -180,7 +180,7 @@ jobs:
 
       - name: Apply ConfigMap
         run: |
-          kubectl apply -f kubernetes/configmap.yaml
+          kubectl apply -f kubernetes/configmap.yaml --namespace epicheck
 
       - name: Check and clean old deployments
         run: |
@@ -197,10 +197,10 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f kubernetes/deployment.yaml
-          kubectl apply -f kubernetes/service.yaml
-          kubectl apply -f kubernetes/ingress.yaml
-          kubectl apply -f kubernetes/hpa.yaml
+          kubectl apply -f kubernetes/deployment.yaml --namespace epicheck
+          kubectl apply -f kubernetes/service.yaml --namespace epicheck
+          kubectl apply -f kubernetes/ingress.yaml --namespace epicheck
+          kubectl apply -f kubernetes/hpa.yaml --namespace epicheck
 
       - name: Update deployment image tags
         run: |

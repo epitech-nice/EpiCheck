@@ -4,7 +4,6 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
     name: epicheck-ingress-redirect
-    namespace: epicheck
     labels:
         app: epicheck
         environment: production
@@ -26,7 +25,6 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
     name: epicheck-ingress
-    namespace: epicheck
     labels:
         app: epicheck
         environment: production
@@ -59,7 +57,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
     name: epicheck-ingress-k8s
-    namespace: epicheck
     labels:
         app: epicheck
         environment: production
@@ -127,7 +124,6 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
     name: redirect-to-https
-    namespace: epicheck
 spec:
     redirectScheme:
         scheme: https
@@ -139,7 +135,6 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
     name: security-headers
-    namespace: epicheck
 spec:
     headers:
         customRequestHeaders:
@@ -162,7 +157,6 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
     name: rate-limit
-    namespace: epicheck
 spec:
     rateLimit:
         average: 100

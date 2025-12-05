@@ -26,7 +26,7 @@
 #
 
 # Dockerfile for CORS Proxy
-FROM node:20-alpine
+FROM node:22-alpine
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 

@@ -213,6 +213,11 @@ class IntraAuthService {
             const response = await this.fetchIntranetAPI(
                 `${INTRA_URL}/user/?format=json`,
             );
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to get user info: ${response.statusText}`,
+                );
+            }
             return await response.json();
         } catch (error: any) {
             console.error("Get intranet user error:", error);

@@ -1,8 +1,8 @@
 /**
- * File Name: IIIntraEvent.ts
+ * File Name: useOpenIntranet.tsx
  * Author: Alexandre Kévin DE FREITAS MARTINS
- * Creation Date: 4/11/2025
- * Description: This is the IIIntraEvent.ts
+ * Creation Date: 5/12/2025
+ * Description: This is the useOpenIntranet.tsx
  * Copyright (c) 2025 Epitech
  * Version: 1.0.0
  *
@@ -25,30 +25,14 @@
  * THE SOFTWARE.
  */
 
-export interface IIntraEvent {
-    scolaryear: string;
-    codemodule: string;
-    codeinstance: string;
-    codeacti: string;
-    codeevent: string;
-    acti_title: string;
-    type_code: string;
-    start: string;
-    end: string;
-    nb_group?: number;
-    num_event?: number;
-    room?: {
-        code: string;
-        type: string;
-    } | null;
-    rights?: string[] | null;
-    is_rdv?: string;
-    type_title?: string;
-    prof_inst?: {
-        login: string;
-        picture: string;
-        title: string;
-        type: string;
-    }[];
-    total_students_registered?: number;
+export function useOpenIntranet() {
+    const openIntranet = () => {
+        window.open(
+            "https://intra.epitech.eu",
+            "_blank",
+            "width=1000,height=800,scrollbars=yes",
+        );
+    };
+
+    return { openIntranet };
 }

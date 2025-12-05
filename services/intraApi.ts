@@ -44,7 +44,6 @@ const BACKEND_BASE_URL =
 class IntraApiService {
     private api: AxiosInstance;
     private isWeb: boolean;
-    private sessionId: string | null = null;
 
     constructor() {
         this.isWeb = Platform.OS === "web";
@@ -60,7 +59,7 @@ class IntraApiService {
         // Add request interceptor to include auth cookie
         this.api.interceptors.request.use(
             async (config) => {
-                // Get Intranet cookie and use it as Bearer token (like old project)
+                // Get Intranet cookie and use it as Bearer token
                 const cookie = await intraAuth.getIntraCookie();
 
                 if (!cookie) {
@@ -112,60 +111,31 @@ class IntraApiService {
     }
 
     /**
-     * Initialize session (for web platform - bypasses anti-DDoS)
+     * Universal request method - uses proxy on web, direct API on mobile
      */
-    async initializeSession(userId: string = "web-user"): Promise<string> {
-        console.log("[IntraApi] Initializing backend session...");
+    private async makeRequest(
+        endpoint: string,
+        method: "GET" | "POST" = "GET",
+        data?: any,
+        params?: any,
+    ): Promise<any> {
+        if (this.isWeb) {
+            // Web: Use proxy server to bypass CORS
+            return this.makeProxyRequest(endpoint, method, data, params);
+        } else {
+            // Mobile: Direct API calls (no CORS restrictions)
+            const config: any = { params };
 
-        try {
-            const response = await axios.post(
-                `${BACKEND_BASE_URL}/api/intra/session/create`,
-                { userId },
-            );
-
-            this.sessionId = response.data.sessionId;
-            console.log("[IntraApi] ✓ Session created:", this.sessionId);
-
-            // Store session ID locally
-            if (Platform.OS === "web") {
-                localStorage.setItem("intra_session_id", this.sessionId || "");
+            if (method === "POST") {
+                return (await this.api.post(endpoint, data, config)).data;
+            } else {
+                return (await this.api.get(endpoint, config)).data;
             }
-
-            return this.sessionId as string;
-        } catch (error: any) {
-            console.error(
-                "[IntraApi] ❌ Session initialization failed:",
-                error.message,
-            );
-            throw new Error("Failed to initialize session: " + error.message);
         }
     }
 
     /**
-     * Get or create session ID
-     */
-    private async getSessionId(): Promise<string | null> {
-        if (this.sessionId) {
-            return this.sessionId;
-        }
-
-        // Try to load from storage
-        if (Platform.OS === "web") {
-            this.sessionId = localStorage.getItem("intra_session_id");
-            if (this.sessionId) {
-                console.log(
-                    "[IntraApi] Loaded session from storage:",
-                    this.sessionId,
-                );
-                return this.sessionId;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Make a request through proxy server (for web platform to bypass CORS)
+     * Make request through proxy server (web only)
      */
     private async makeProxyRequest(
         endpoint: string,
@@ -173,26 +143,10 @@ class IntraApiService {
         data?: any,
         params?: any,
     ): Promise<any> {
-        // Try session-based auth first
-        const sessionId = await this.getSessionId();
-
-        if (sessionId) {
-            return this.makeSessionRequest(
-                endpoint,
-                method,
-                data,
-                params,
-                sessionId,
-            );
-        }
-
-        // Fallback to cookie-based auth
         const cookie = await intraAuth.getIntraCookie();
 
         if (!cookie) {
-            throw new Error(
-                "No authentication found. Please log in through the WebView authentication.",
-            );
+            throw new Error("No authentication found. Please log in first.");
         }
 
         // Build full endpoint with query params
@@ -206,11 +160,7 @@ class IntraApiService {
         fullEndpoint +=
             (fullEndpoint.includes("?") ? "&" : "?") + "format=json";
 
-        console.log(
-            "🌐 Making proxy request (cookie-based):",
-            method,
-            fullEndpoint,
-        );
+        console.log("🌐 Making proxy request:", method, fullEndpoint);
 
         try {
             const response = await axios.post(PROXY_BASE_URL, {
@@ -227,94 +177,22 @@ class IntraApiService {
                 error.response?.data || error.message,
             );
 
+            // Check for authentication errors
+            if (error.response?.status === 401) {
+                throw new Error(
+                    error.response.data?.message ||
+                        "Cookie expired. Please log in again with a fresh cookie.",
+                );
+            }
+
             // Check if it's a proxied error from Intranet API
             if (error.response?.data?.error) {
-                throw new Error(error.response.data.error);
+                throw new Error(
+                    error.response.data.message || error.response.data.error,
+                );
             }
 
             throw error;
-        }
-    }
-
-    /**
-     * Make a request using backend session
-     */
-    private async makeSessionRequest(
-        endpoint: string,
-        method: "GET" | "POST" = "GET",
-        data?: any,
-        params?: any,
-        sessionId?: string,
-    ): Promise<any> {
-        const sid = sessionId || (await this.getSessionId());
-
-        if (!sid) {
-            throw new Error("No session ID available");
-        }
-
-        // Build full endpoint with query params
-        let fullEndpoint = endpoint;
-        if (params) {
-            const queryString = new URLSearchParams(params).toString();
-            fullEndpoint += (endpoint.includes("?") ? "&" : "?") + queryString;
-        }
-
-        // Always add format=json
-        fullEndpoint +=
-            (fullEndpoint.includes("?") ? "&" : "?") + "format=json";
-
-        console.log(
-            "🌐 Making proxy request (session-based):",
-            method,
-            fullEndpoint,
-        );
-
-        try {
-            const response = await axios.post(PROXY_BASE_URL, {
-                endpoint: fullEndpoint,
-                sessionId: sid,
-                method,
-                data,
-            });
-
-            return response.data;
-        } catch (error: any) {
-            console.error(
-                "Session request error:",
-                error.response?.data || error.message,
-            );
-
-            // If session expired, clear it
-            if (error.response?.status === 401) {
-                this.sessionId = null;
-                if (Platform.OS === "web") {
-                    localStorage.removeItem("intra_session_id");
-                }
-            }
-
-            throw error;
-        }
-    }
-
-    /**
-     * Universal request method that uses proxy on web, direct API on mobile
-     */
-    private async makeRequest(
-        endpoint: string,
-        method: "GET" | "POST" = "GET",
-        data?: any,
-        params?: any,
-    ): Promise<any> {
-        if (this.isWeb) {
-            return this.makeProxyRequest(endpoint, method, data, params);
-        } else {
-            // Use direct axios instance for mobile
-            const config: any = { params };
-            if (method === "POST") {
-                return (await this.api.post(endpoint, data, config)).data;
-            } else {
-                return (await this.api.get(endpoint, config)).data;
-            }
         }
     }
 

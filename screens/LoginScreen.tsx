@@ -42,13 +42,14 @@ import {
 import intraApi from "../services/intraApi";
 import AppTitle from "../components/AppTitle";
 import intraAuth from "../services/intraAuth";
+import Toast from "react-native-toast-message";
 import IntraWebViewAuth from "./IntraWebViewAuth";
 import { useTheme } from "../contexts/ThemeContext";
-import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useOpenIntranet } from "../hooks/useOpenIntranet";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useColoredUnderscore } from "../hooks/useColoredUnderscore";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import Toast from "react-native-toast-message";
 
 type RootStackParamList = {
     Login: undefined;
@@ -61,11 +62,11 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function LoginScreen() {
     const { isDark } = useTheme();
     const hasCheckedAuthRef = useRef(false);
+    const { openIntranet } = useOpenIntranet();
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation<NavigationProp>();
     const { underscore, color } = useColoredUnderscore();
     const [showWebView, setShowWebView] = useState(false);
-    const [sessionInitialized, setSessionInitialized] = useState(false);
 
     // Check if user is already authenticated on mount
     const checkExistingAuth = useCallback(async () => {
@@ -108,50 +109,23 @@ export default function LoginScreen() {
     }, [checkExistingAuth]);
 
     const handleIntranetLogin = async () => {
-        setIsLoading(true);
-
-        try {
-            // Initialize backend session (bypasses anti-DDoS with Puppeteer)
-            console.log("[LoginScreen] Initializing backend session...");
-
-            if (Platform.OS === "web") {
-                await intraApi.initializeSession("web-user");
-                setSessionInitialized(true);
-                console.log("[LoginScreen] ✓ Session initialized");
-            }
-
-            setIsLoading(false);
-            // Show WebView modal for authentication
-            setShowWebView(true);
-        } catch (error: any) {
-            console.error("[LoginScreen] Session init failed:", error.message);
-            setIsLoading(false);
-            Toast.show({
-                type: "error",
-                text1: "Initialization Failed",
-                text2: error.message || "Could not initialize session",
-                position: "top",
-            });
-        }
+        // Directly show authentication modal - no backend session needed
+        console.log("[LoginScreen] Opening authentication...");
+        setShowWebView(true);
+        openIntranet();
     };
 
-    const handleAuthSuccess = async (sessionIdOrCookie: string) => {
+    const handleAuthSuccess = async (cookie: string) => {
         setShowWebView(false);
         setIsLoading(true);
 
         try {
-            console.log("[LoginScreen] Authentication successful");
+            console.log(
+                "[LoginScreen] Authentication successful, saving cookie...",
+            );
 
-            // On web, we receive sessionId; on mobile, we receive cookie
-            if (Platform.OS === "web") {
-                // Session-based auth (web)
-                console.log("[LoginScreen] Using session-based auth");
-                // Session is already stored in intraApi, just verify it works
-            } else {
-                // Cookie-based auth (mobile)
-                console.log("[LoginScreen] Using cookie-based auth");
-                await intraAuth.setIntraCookie(sessionIdOrCookie);
-            }
+            // Store the cookie (works for both web and mobile)
+            await intraAuth.setIntraCookie(cookie);
 
             // Get user info to verify login
             const userInfo = await intraApi.getCurrentUser();

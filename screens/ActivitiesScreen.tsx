@@ -41,11 +41,13 @@ import {
 import intraApi from "../services/intraApi";
 import Toast from "react-native-toast-message";
 import epitechApi from "../services/epitechApi";
-import { useState, useEffect, useRef } from "react";
 import { IIntraEvent } from "../types/IIntraEvent";
+import { useTheme } from "../contexts/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
+import { useState, useEffect, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useColoredUnderscore } from "../hooks/useColoredUnderscore";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -60,12 +62,14 @@ type RootStackParamList = {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ActivitiesScreen() {
+    const { isDark } = useTheme();
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation<NavigationProp>();
     const [refreshing, setRefreshing] = useState(false);
     const { underscore, color } = useColoredUnderscore();
-    const [activities, setActivities] = useState<IIntraEvent[]>([]);
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [activities, setActivities] = useState<IIntraEvent[]>([]);
 
     const eventColors: { [key: string]: string } = {
         exam: "#dd9473",
@@ -76,69 +80,94 @@ export default function ActivitiesScreen() {
         rdv: "#f97316", // Orange for RDV/appointments
     };
 
-    const loadActivities = async (date: Date = selectedDate) => {
-        try {
-            console.log("Loading activities...");
-            setLoading(true);
-            const data = await epitechApi.getActivitiesForDate(date);
-            console.log("Activities loaded:", data.length, "events");
-            setActivities(data);
-        } catch (error: any) {
-            console.error("Load activities error:", error);
-            console.error(
-                "Error details:",
-                error.response?.data || error.message,
-            );
+    const handleLogout = useCallback(() => {
+        Alert.alert("Logout", "Are you sure you want to logout?", [
+            { text: "Cancel", style: "cancel" },
+            {
+                text: "Logout",
+                style: "destructive",
+                onPress: async () => {
+                    // Only logout from Intranet (Office365 kept for later if needed)
+                    await intraApi.logout();
+                    epitechApi.logout();
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
+                },
+            },
+        ]);
+    }, [navigation]);
 
-            // If session expired, prompt to re-login
-            if (error.message.includes("Session expired")) {
-                Alert.alert(
-                    "Session Expired",
-                    "Your Intranet session has expired. Please log in again.",
-                    [
-                        {
-                            text: "Re-login",
-                            onPress: async () => {
-                                try {
-                                    await intraApi.authenticate();
-                                    loadActivities(date);
-                                } catch (authError: any) {
-                                    Toast.show({
-                                        type: "error",
-                                        text1: "Error",
-                                        text2:
-                                            authError.message ||
-                                            "Failed to authenticate",
-                                        position: "top",
-                                    });
-                                    handleLogout();
-                                }
-                            },
-                        },
-                        {
-                            text: "Logout",
-                            style: "destructive",
-                            onPress: handleLogout,
-                        },
-                    ],
+    const loadActivities = useCallback(
+        async (date: Date = selectedDate) => {
+            try {
+                console.log("Loading activities...");
+                setLoading(true);
+                const data = await epitechApi.getActivitiesForDate(date);
+                console.log("Activities loaded:", data.length, "events");
+                setActivities(data);
+            } catch (error: any) {
+                console.error("Load activities error:", error);
+                console.error(
+                    "Error details:",
+                    error.response?.data || error.message,
                 );
-            } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: error.message || "Failed to load activities",
-                    position: "top",
-                });
+
+                // If session expired, prompt to re-login
+                if (error.message.includes("Session expired")) {
+                    Alert.alert(
+                        "Session Expired",
+                        "Your Intranet session has expired. Please log in again.",
+                        [
+                            {
+                                text: "Re-login",
+                                onPress: async () => {
+                                    try {
+                                        await intraApi.authenticate();
+                                        loadActivities(date);
+                                    } catch (authError: any) {
+                                        Toast.show({
+                                            type: "error",
+                                            text1: "Error",
+                                            text2:
+                                                authError.message ||
+                                                "Failed to authenticate",
+                                            position: "top",
+                                        });
+                                        handleLogout();
+                                    }
+                                },
+                            },
+                            {
+                                text: "Logout",
+                                style: "destructive",
+                                onPress: handleLogout,
+                            },
+                        ],
+                    );
+                } else {
+                    Toast.show({
+                        type: "error",
+                        text1: "Error",
+                        text2: error.message || "Failed to load activities",
+                        position: "top",
+                    });
+                }
+            } finally {
+                setLoading(false);
+                setRefreshing(false);
             }
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    };
+        },
+        [handleLogout, selectedDate],
+    );
 
     useEffect(() => {
+        if (selectedDate === undefined) {
+            return;
+        }
         loadActivities(selectedDate);
-    }, [selectedDate]);
+    }, [loadActivities, selectedDate]);
 
     const handleRefresh = () => {
         setRefreshing(true);
@@ -161,23 +190,14 @@ export default function ActivitiesScreen() {
         setSelectedDate(newDate);
     };
 
-    const handleLogout = () => {
-        Alert.alert("Logout", "Are you sure you want to logout?", [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Logout",
-                style: "destructive",
-                onPress: async () => {
-                    // Only logout from Intranet (Office365 kept for later if needed)
-                    await intraApi.logout();
-                    epitechApi.logout();
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: "Login" }],
-                    });
-                },
-            },
-        ]);
+    const handleDateChange = (event: any, selectedDate?: Date) => {
+        if (selectedDate === undefined) {
+            return;
+        }
+        setShowDatePicker(false);
+        if (selectedDate) {
+            setSelectedDate(selectedDate);
+        }
     };
 
     const formatTime = (dateStr: string) => {
@@ -204,10 +224,115 @@ export default function ActivitiesScreen() {
     if (loading) {
         return (
             <SafeAreaView className="flex-1">
+                {/* Header */}
+                <View className="bg-primary px-4 py-5">
+                    <View className="mb-2 flex-row items-center justify-between">
+                        <View className="flex-1 flex-row items-center">
+                            <View className="mr-3 h-10 w-10 items-center justify-center">
+                                <Image
+                                    source={require("../assets/img/epicheck-icon.png")}
+                                    className="absolute h-8 w-8 bg-white"
+                                    resizeMode="contain"
+                                    style={{ width: 32, height: 32 }}
+                                />
+                            </View>
+                            <View className="flex-1">
+                                <Text
+                                    className="text-2xl text-white"
+                                    style={{ fontFamily: "Anton" }}
+                                >
+                                    ACTIVITIES
+                                    <Text style={{ color }}>{underscore}</Text>
+                                </Text>
+                            </View>
+                        </View>
+                        <View className="flex-row gap-2">
+                            {__DEV__ && (
+                                <>
+                                    {/* Quick scan button */}
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            navigation.navigate("Presence", {})
+                                        }
+                                        className="border border-white/30 bg-white/20 px-2 py-2"
+                                    >
+                                        <Ionicons
+                                            name="scan-outline"
+                                            size={24}
+                                            color="white"
+                                        />
+                                    </TouchableOpacity>
+                                </>
+                            )}
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("Settings")}
+                                className="border border-white/30 bg-white/20 px-2 py-2"
+                            >
+                                <Ionicons name="cog" size={24} color="white" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={handleLogout}
+                                className="border border-white/30 bg-white/20 px-2 py-2"
+                            >
+                                <Ionicons
+                                    name="log-out-outline"
+                                    size={24}
+                                    color="white"
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View className="mt-3 w-full flex-row items-center justify-center border border-white/30 bg-white/20 px-2 py-2">
+                        <TouchableOpacity
+                            onPress={handlePrevDay}
+                            className="mr-auto px-2 py-2"
+                        >
+                            <AntDesign name="left" size={16} color="white" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setShowDatePicker(true)}
+                        >
+                            <Text
+                                className="px-2 py-2 text-white underline"
+                                style={{ fontFamily: "Anton" }}
+                            >
+                                {selectedDate.toLocaleDateString("en-US", {
+                                    weekday: "long",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={handleNextDay}
+                            className="ml-auto px-2 py-2"
+                        >
+                            <AntDesign name="right" size={16} color="white" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Date Picker */}
+                {showDatePicker && (
+                    <DateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        display="default"
+                        onChange={handleDateChange}
+                        maximumDate={
+                            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                        } // 1 year from now
+                        minimumDate={
+                            new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+                        } // 1 year ago
+                    />
+                )}
                 <View className="flex-1 items-center justify-center">
                     <ActivityIndicator size="large" />
                     <Text
-                        className="mt-4 text-text-primary"
+                        className="mt-4 text-primary"
                         style={{ fontFamily: "IBMPlexSans" }}
                     >
                         Loading activities...
@@ -246,42 +371,26 @@ export default function ActivitiesScreen() {
                                 ACTIVITIES
                                 <Text style={{ color }}>{underscore}</Text>
                             </Text>
-                            <View className="mt-1 flex-row items-center">
-                                <TouchableOpacity
-                                    onPress={handlePrevDay}
-                                    className="mr-3 p-1"
-                                >
-                                    <AntDesign
-                                        name="left"
-                                        size={16}
-                                        color="white"
-                                    />
-                                </TouchableOpacity>
-                                <Text
-                                    className="text-xs text-white/80"
-                                    style={{ fontFamily: "IBMPlexSans" }}
-                                >
-                                    {selectedDate.toLocaleDateString("en-US", {
-                                        weekday: "long",
-                                        year: "numeric",
-                                        month: "long",
-                                        day: "numeric",
-                                    })}
-                                </Text>
-                                <TouchableOpacity
-                                    onPress={handleNextDay}
-                                    className="ml-3 p-1"
-                                >
-                                    <AntDesign
-                                        name="right"
-                                        size={16}
-                                        color="white"
-                                    />
-                                </TouchableOpacity>
-                            </View>
                         </View>
                     </View>
                     <View className="flex-row gap-2">
+                        {__DEV__ && (
+                            <>
+                                {/* Quick scan button */}
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        navigation.navigate("Presence", {})
+                                    }
+                                    className="border border-white/30 bg-white/20 px-2 py-2"
+                                >
+                                    <Ionicons
+                                        name="scan-outline"
+                                        size={24}
+                                        color="white"
+                                    />
+                                </TouchableOpacity>
+                            </>
+                        )}
                         <TouchableOpacity
                             onPress={() => navigation.navigate("Settings")}
                             className="border border-white/30 bg-white/20 px-2 py-2"
@@ -301,19 +410,50 @@ export default function ActivitiesScreen() {
                     </View>
                 </View>
 
-                {/* Quick scan button */}
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("Presence", {})}
-                    className="mt-3 border border-white/30 bg-white/20 px-4 py-3"
-                >
-                    <Text
-                        className="text-center text-white"
-                        style={{ fontFamily: "Anton" }}
+                <View className="mt-3 w-full flex-row items-center justify-center border border-white/30 bg-white/20 px-2 py-2">
+                    <TouchableOpacity
+                        onPress={handlePrevDay}
+                        className="mr-auto px-2 py-2"
                     >
-                        QUICK SCAN (NO EVENT)
-                    </Text>
-                </TouchableOpacity>
+                        <AntDesign name="left" size={16} color="white" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                        <Text
+                            className="px-2 py-2 text-white underline"
+                            style={{ fontFamily: "Anton" }}
+                        >
+                            {selectedDate.toLocaleDateString("en-US", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            })}
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={handleNextDay}
+                        className="ml-auto px-2 py-2"
+                    >
+                        <AntDesign name="right" size={16} color="white" />
+                    </TouchableOpacity>
+                </View>
             </View>
+
+            {/* Date Picker */}
+            {showDatePicker && (
+                <DateTimePicker
+                    value={selectedDate}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                    maximumDate={
+                        new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                    } // 1 year from now
+                    minimumDate={
+                        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+                    } // 1 year ago
+                />
+            )}
 
             {/* Activities List */}
             <ScrollView
@@ -325,17 +465,25 @@ export default function ActivitiesScreen() {
                     />
                 }
             >
-                {activities.length === 0 ? (
+                {activities === undefined ||
+                activities === null ||
+                activities.length === undefined ||
+                activities.length === 0 ? (
                     <View className="flex-1 items-center justify-center py-20">
-                        <Text className="mb-4 text-6xl">📅</Text>
+                        <Ionicons
+                            className="mb-4"
+                            name="calendar-clear"
+                            size={88}
+                            color={isDark ? "white" : "black"}
+                        />
                         <Text
-                            className="text-lg text-text-primary"
+                            className="text-lg text-primary"
                             style={{ fontFamily: "Anton" }}
                         >
                             No activities found
                         </Text>
                         <Text
-                            className="mt-2 text-sm text-text-secondary"
+                            className="mt-2 text-sm text-text-tertiary"
                             style={{ fontFamily: "IBMPlexSans" }}
                         >
                             Pull down to refresh
@@ -372,7 +520,18 @@ export default function ActivitiesScreen() {
                                     style={{ backgroundColor: bgColor }}
                                     className="mb-3 overflow-hidden"
                                     onPress={() => {
-                                        if (event.type_title === "Follow-up") {
+                                        if (
+                                            event.rights === undefined ||
+                                            event.rights === null
+                                        ) {
+                                            return;
+                                        }
+                                        if (
+                                            event.type_title === "Follow-up" &&
+                                            event.rights?.includes(
+                                                "force_register",
+                                            ) !== false
+                                        ) {
                                             navigation.navigate("RdvDetails", {
                                                 event,
                                             });

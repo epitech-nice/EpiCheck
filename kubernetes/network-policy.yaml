@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
     name: epicheck-network-policy
-    namespace: epicheck
 spec:
     podSelector:
         matchLabels:

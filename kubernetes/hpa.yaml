@@ -2,7 +2,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
     name: epicheck-app-hpa
-    namespace: epicheck
     labels:
         app: epicheck
         component: web
@@ -49,7 +48,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
     name: epicheck-proxy-hpa
-    namespace: epicheck
     labels:
         app: epicheck
         component: proxy

@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
     name: epicheck-app
-    namespace: epicheck
     labels:
         app: epicheck
         component: web
@@ -23,7 +22,6 @@ apiVersion: v1
 kind: Service
 metadata:
     name: epicheck-proxy
-    namespace: epicheck
     labels:
         app: epicheck
         component: proxy

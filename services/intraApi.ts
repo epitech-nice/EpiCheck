@@ -38,6 +38,8 @@ const INTRA_BASE_URL = "https://intra.epitech.eu";
 const PROXY_BASE_URL =
     process.env.EXPO_PUBLIC_PROXY_URL ||
     "http://localhost:3001/api/intra-proxy"; // For web platform
+const BACKEND_BASE_URL =
+    process.env.EXPO_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
 class IntraApiService {
     private api: AxiosInstance;
@@ -57,7 +59,7 @@ class IntraApiService {
         // Add request interceptor to include auth cookie
         this.api.interceptors.request.use(
             async (config) => {
-                // Get Intranet cookie and use it as Bearer token (like old project)
+                // Get Intranet cookie and use it as Bearer token
                 const cookie = await intraAuth.getIntraCookie();
 
                 if (!cookie) {
@@ -109,7 +111,31 @@ class IntraApiService {
     }
 
     /**
-     * Make a request through proxy server (for web platform to bypass CORS)
+     * Universal request method - uses proxy on web, direct API on mobile
+     */
+    private async makeRequest(
+        endpoint: string,
+        method: "GET" | "POST" = "GET",
+        data?: any,
+        params?: any,
+    ): Promise<any> {
+        if (this.isWeb) {
+            // Web: Use proxy server to bypass CORS
+            return this.makeProxyRequest(endpoint, method, data, params);
+        } else {
+            // Mobile: Direct API calls (no CORS restrictions)
+            const config: any = { params };
+
+            if (method === "POST") {
+                return (await this.api.post(endpoint, data, config)).data;
+            } else {
+                return (await this.api.get(endpoint, config)).data;
+            }
+        }
+    }
+
+    /**
+     * Make request through proxy server (web only)
      */
     private async makeProxyRequest(
         endpoint: string,
@@ -120,9 +146,7 @@ class IntraApiService {
         const cookie = await intraAuth.getIntraCookie();
 
         if (!cookie) {
-            throw new Error(
-                "No authentication cookie found. Please log in through the WebView authentication.",
-            );
+            throw new Error("No authentication found. Please log in first.");
         }
 
         // Build full endpoint with query params
@@ -153,34 +177,22 @@ class IntraApiService {
                 error.response?.data || error.message,
             );
 
+            // Check for authentication errors
+            if (error.response?.status === 401) {
+                throw new Error(
+                    error.response.data?.message ||
+                        "Cookie expired. Please log in again with a fresh cookie.",
+                );
+            }
+
             // Check if it's a proxied error from Intranet API
             if (error.response?.data?.error) {
-                throw new Error(error.response.data.error);
+                throw new Error(
+                    error.response.data.message || error.response.data.error,
+                );
             }
 
             throw error;
-        }
-    }
-
-    /**
-     * Universal request method that uses proxy on web, direct API on mobile
-     */
-    private async makeRequest(
-        endpoint: string,
-        method: "GET" | "POST" = "GET",
-        data?: any,
-        params?: any,
-    ): Promise<any> {
-        if (this.isWeb) {
-            return this.makeProxyRequest(endpoint, method, data, params);
-        } else {
-            // Use direct axios instance for mobile
-            const config: any = { params };
-            if (method === "POST") {
-                return (await this.api.post(endpoint, data, config)).data;
-            } else {
-                return (await this.api.get(endpoint, config)).data;
-            }
         }
     }
 
@@ -489,6 +501,111 @@ class IntraApiService {
      */
     async isAuthenticated(): Promise<boolean> {
         return await intraAuth.isAuthenticated();
+    }
+
+    /**
+     * Get RDV registrations for an event
+     * Endpoint: /module/{year}/{module}/{instance}/{acti}/rdv?format=json
+     */
+    async getRdvRegistrations(event: IIntraEvent): Promise<any> {
+        try {
+            const codeActi = event.codeacti.startsWith("acti-")
+                ? event.codeacti
+                : `acti-${event.codeacti}`;
+
+            const endpoint = `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${codeActi}/rdv`;
+
+            console.log("[IntraApi] Fetching RDV registrations:", endpoint);
+            const data = await this.makeRequest(endpoint, "GET");
+            console.log("[IntraApi] ✓ RDV data received");
+            return data;
+        } catch (error: any) {
+            console.error(
+                "Get RDV registrations error:",
+                error.response?.data || error.message,
+            );
+            throw new Error("Failed to fetch RDV registrations");
+        }
+    }
+
+    /**
+     * Extract clean project name from RDV data
+     * Handles formats like "[B1][MUL]  MyRadar" -> "myradar"
+     */
+    extractProjectNameFromRdv(rdvData: any): string | null {
+        if (!rdvData || !rdvData.project || !rdvData.project.title) {
+            return null;
+        }
+
+        const projectTitle = rdvData.project.title;
+        console.log(
+            "[IntraApi] Extracting project name from title:",
+            projectTitle,
+        );
+
+        // Remove all bracket content and trim
+        // Handles: "[B1][MUL]  MyRadar" -> "MyRadar"
+        let cleanName = projectTitle.replace(/\[[^\]]*\]/g, "").trim();
+
+        // Convert to lowercase and remove spaces/special chars and underscores
+        cleanName = cleanName.toLowerCase().replace(/[\s_]+/g, "");
+
+        console.log("[IntraApi] ✓ Extracted clean project name:", cleanName);
+        return cleanName;
+    }
+
+    /**
+     * Get project information for an activity
+     * Endpoint: /module/{year}/{module}/{instance}/{acti}/project?format=json
+     */
+    async getProjectInfo(event: IIntraEvent): Promise<any> {
+        try {
+            const activityName = event.codeacti.startsWith("acti-")
+                ? event.codeacti
+                : `acti-${event.codeacti}`;
+            const endpoint = `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${activityName}/project`;
+
+            console.log("[IntraApi] Fetching project info:", endpoint);
+            const data = await this.makeRequest(endpoint, "GET");
+            console.log("[IntraApi] ✓ Project data received:", data?.title);
+            return data;
+        } catch (error: any) {
+            console.error(
+                "Get project info error:",
+                error.response?.data || error.message,
+            );
+            // Return null if project not found (some activities don't have projects)
+            if (error.response?.status === 404) {
+                console.warn("[IntraApi] Project not found for activity");
+                return null;
+            }
+            throw new Error("Failed to fetch project information");
+        }
+    }
+
+    /**
+     * Get activity details
+     * Endpoint: /module/{year}/{module}/{instance}/{acti}?format=json
+     */
+    async getActivityDetails(event: IIntraEvent): Promise<any> {
+        try {
+            const codeActi = event.codeacti.startsWith("acti-")
+                ? event.codeacti
+                : `acti-${event.codeacti}`;
+
+            const endpoint = `/module/${event.scolaryear}/${event.codemodule}/${event.codeinstance}/${codeActi}`;
+
+            console.log("[IntraApi] Fetching activity details:", endpoint);
+            const data = await this.makeRequest(endpoint, "GET");
+            console.log("[IntraApi] ✓ Activity data received");
+            return data;
+        } catch (error: any) {
+            console.error(
+                "Get activity details error:",
+                error.response?.data || error.message,
+            );
+            throw new Error("Failed to fetch activity details");
+        }
     }
 }
 

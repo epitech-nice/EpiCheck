@@ -111,6 +111,36 @@ npm run android
 
 3. **Follow authentication steps** in the app to extract your Intranet cookie
 
+#### Web (with Docker)
+
+##### Development Mode
+
+1. **Build and run with Docker**:
+
+    ```bash
+    docker compose -f docker-compose.dev.yml -p epicheck-dev build
+    ```
+
+2. **Run the container**:
+
+    ```bash
+    docker compose -f docker-compose.dev.yml -p epicheck-dev up -d
+    ```
+
+##### Prod Mode
+
+1. **Build and run with Docker**:
+
+    ```bash
+    docker compose -f docker-compose.yml -p epicheck-prod build
+    ```
+
+2. **Run the container**:
+
+    ```bash
+    docker compose -f docker-compose.yml -p epicheck-prod up -d
+    ```
+
 📚 **Full web setup guide:** See [`docs/WEB_QUICKSTART.md`](docs/WEB_QUICKSTART.md)
 
 **Note:** For production deployment, see [`proxy-server/README.md`](proxy-server/README.md)

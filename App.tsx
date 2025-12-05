@@ -41,6 +41,7 @@ import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { setDefaultFontFamily } from "./utils/setDefaultFontFamily";
 import ManualAttendanceScreen from "./screens/ManualAttendanceScreen";
+import RdvDetailsScreen from "./screens/RdvDetailsScreen";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -53,6 +54,7 @@ type RootStackParamList = {
     Presence: { event?: IIntraEvent };
     ManualAttendance: { event?: IIntraEvent };
     Settings: undefined;
+    RdvDetails: { event: IIntraEvent };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -66,20 +68,20 @@ function AppNavigator() {
             <BaseToast
                 {...props}
                 style={{
-                    borderLeftColor: '#10b981',
-                    backgroundColor: isDark ? '#1f2937' : '#ffffff',
+                    borderLeftColor: "#10b981",
+                    backgroundColor: isDark ? "#1f2937" : "#ffffff",
                 }}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 text1Style={{
                     fontSize: 15,
-                    fontWeight: '600',
-                    fontFamily: 'IBMPlexSansBold',
-                    color: isDark ? '#ffffff' : '#111827',
+                    fontWeight: "600",
+                    fontFamily: "IBMPlexSansBold",
+                    color: isDark ? "#ffffff" : "#111827",
                 }}
                 text2Style={{
                     fontSize: 13,
-                    fontFamily: 'IBMPlexSans',
-                    color: isDark ? '#d1d5db' : '#6b7280',
+                    fontFamily: "IBMPlexSans",
+                    color: isDark ? "#d1d5db" : "#6b7280",
                 }}
             />
         ),
@@ -87,19 +89,19 @@ function AppNavigator() {
             <ErrorToast
                 {...props}
                 style={{
-                    borderLeftColor: '#ef4444',
-                    backgroundColor: isDark ? '#1f2937' : '#ffffff',
+                    borderLeftColor: "#ef4444",
+                    backgroundColor: isDark ? "#1f2937" : "#ffffff",
                 }}
                 text1Style={{
                     fontSize: 15,
-                    fontWeight: '600',
-                    fontFamily: 'IBMPlexSansBold',
-                    color: isDark ? '#ffffff' : '#111827',
+                    fontWeight: "600",
+                    fontFamily: "IBMPlexSansBold",
+                    color: isDark ? "#ffffff" : "#111827",
                 }}
                 text2Style={{
                     fontSize: 13,
-                    fontFamily: 'IBMPlexSans',
-                    color: isDark ? '#d1d5db' : '#6b7280',
+                    fontFamily: "IBMPlexSans",
+                    color: isDark ? "#d1d5db" : "#6b7280",
                 }}
             />
         ),
@@ -107,20 +109,20 @@ function AppNavigator() {
             <BaseToast
                 {...props}
                 style={{
-                    borderLeftColor: '#3b82f6',
-                    backgroundColor: isDark ? '#1f2937' : '#ffffff',
+                    borderLeftColor: "#3b82f6",
+                    backgroundColor: isDark ? "#1f2937" : "#ffffff",
                 }}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 text1Style={{
                     fontSize: 15,
-                    fontWeight: '600',
-                    fontFamily: 'IBMPlexSansBold',
-                    color: isDark ? '#ffffff' : '#111827',
+                    fontWeight: "600",
+                    fontFamily: "IBMPlexSansBold",
+                    color: isDark ? "#ffffff" : "#111827",
                 }}
                 text2Style={{
                     fontSize: 13,
-                    fontFamily: 'IBMPlexSans',
-                    color: isDark ? '#d1d5db' : '#6b7280',
+                    fontFamily: "IBMPlexSans",
+                    color: isDark ? "#d1d5db" : "#6b7280",
                 }}
             />
         ),
@@ -144,6 +146,7 @@ function AppNavigator() {
                     name="ManualAttendance"
                     component={ManualAttendanceScreen}
                 />
+                <Stack.Screen name="RdvDetails" component={RdvDetailsScreen} />
                 <Stack.Screen name="Settings" component={SettingsScreen} />
             </Stack.Navigator>
             <StatusBar style={isDark ? "light" : "dark"} />

@@ -116,6 +116,7 @@ jobs:
         with:
           context: ./proxy-server
           file: ./proxy-server/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta-proxy.outputs.tags }}
           labels: ${{ steps.meta-proxy.outputs.labels }}

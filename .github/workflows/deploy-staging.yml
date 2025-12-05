@@ -8,8 +8,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_APP: ${{ github.repository_owner }}/epicheck
-  IMAGE_NAME_PROXY: ${{ github.repository_owner }}/epicheck-proxy
+  IMAGE_NAME_APP: ${{ github.repository_owner }}/epicheck-staging
+  IMAGE_NAME_PROXY: ${{ github.repository_owner }}/epicheck-proxy-staging
   NAMESPACE: epicheck-staging
 
 jobs:

@@ -51,9 +51,6 @@ COPY package.json pnpm-lock.yaml ./
 # Install all dependencies (including dev dependencies for build)
 RUN pnpm install --frozen-lockfile
 
-# Install missing peer dependencies explicitly
-RUN pnpm install react-native-worklets --legacy-peer-deps || true
-
 # Install Expo CLI globally
 RUN npm install -g expo-cli @expo/ngrok
 

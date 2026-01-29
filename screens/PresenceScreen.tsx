@@ -176,6 +176,7 @@ export default function PresenceScreen() {
     };
 
     const clearHistory = () => {
+        setScannedStudents([]);
         Toast.show({
             type: "info",
             text1: "Scan history cleared",
@@ -356,7 +357,7 @@ export default function PresenceScreen() {
                     )}
                 </View>
                 <View className="mx-12 border-b border-primary" />
-                <ScrollView className="px-4 py-2">
+                <ScrollView className="px-4 py-2 max-h-32 h-auto">
                     {scannedStudents.length === 0 ? (
                         <View className="items-center py-8">
                             <Text

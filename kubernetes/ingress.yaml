@@ -52,7 +52,7 @@ spec:
               - name: security-headers
               - name: rate-limit
     tls:
-        secretName: epicheck-tls
+        secretName: epicheck-tls-all-domains
         domains:
             - main: epicheck.alexandredfm.fr
               sans:
@@ -84,7 +84,7 @@ spec:
               - www.epicheck.alexandredfm.fr
               - epicheck.nice-tek.eu
               - www.epicheck.nice-tek.eu
-          secretName: epicheck-tls
+          secretName: epicheck-tls-all-domains
     rules:
         - host: epicheck.alexandredfm.fr
           http:
